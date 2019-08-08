@@ -1,7 +1,7 @@
 ## Settings
-title: pRoJEct-NeGYa
-owner: "DeerRIDER"
-url: "https://akiritsu.github.io"
+title: 技術深入淺出
+owner: "Mark_Mew"
+url: "https://github.com/MarkMew"
 baseurl: "/"
 permalink: /:title/
 description: ""
@@ -10,8 +10,8 @@ webrick:
   headers:
     Access-Control-Allow-Origin: "*"
 ## Global Variables
-email: "akiritsu@outlook.com"
-github: "akiritsu/pRoJEct-NeGYa"
+email: "Mark_Mew@weco.net"
+github: "MarkMew"
 # path to: css/, fonts/, img/ and js/
 assets_path: "/assets" # i.e. "/assets" 
 statement: "Designed by DeerRIDER, All Rights Reserved"

@@ -5,37 +5,49 @@ toc: false
 home_btn: true
 btn_text: true
 footer: true
-title: ""
+title: "MARK_MEW 技術深入淺出"
 author: ""
-encrypted_text: true
 permalink: /
 ---
 
-# PROJECT NEGYA - HACKER-STYLE PERSONAL HOMEPAGE
+# MARK_MEW 技術深入淺出
 
-##  Features
-* Highly customizable, content-oriented with The Matrix style
-* Eyesight-protection layout
-* Decrypt and encrypt text (access token: 233): 
-  * secret msg 1: 
-  <p class="encrypted" id="/MZAf/PKx9jpw8/Jnp7XQQFki2ibGnArZP46W+keVThXquhWwFROEFnbY8eC57Tw==">Encrypted content!</p>
-  * secret msg 2: 
-  <p class="encrypted" id="G7D+0370pNmixIP1j7teCg1jtm9XCdOWYFH61lcM0LYWlT0hB3rS9raIs=">Encrypted content!</p>
-* LaTeX formula Support with MathJax
+## 聊聊重構
 
-$$
-NADH+Q+5\;H_{matrix}^{+}\rightarrow NAD^{+}+QH_{2}+4\;H_{intermembrane}^{+}\!
-$$
+效能好的程式碼是能力問題，好閱讀的程式碼是意願問題。
+	
+面對那些曾經開發出來的程式碼，或許我們不一定有能力讓它更有效率、更節省資源，但是我們都有能力使它們更容易閱讀
+	
+## 聊聊Java
 
-* Code highlight with Rouge
+長年以來都是大家最常用的程式語言之一
+	
+Java的強大但繁瑣，令人又愛又恨
+	
+近年來Springboot的推出，又讓Java推升到不同的境界
+	
+## 聊聊前端
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
-## Download and Documentation
+早期的jQuery使得頁面雜亂無章
+	
+近年前端框架的盛行
+	
+使得頁面更簡潔易懂、共容易維護
+	
+	
+## 聊聊Git
+	
+版本控管早期僅能使用SVN
+	
+由於Git更多的功能更好的管理
+	
+使得版本更容易被控管
+	
+也較易多人協同作業
+	
+	
+## 聊聊開發方法
+	
+TDD
 
-[**pRoJEct NeGYa (Github)**](https://github.com/akiritsu/pRoJEct-NeGYa)
-
+DDD
