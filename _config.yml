@@ -2,7 +2,7 @@
 title: 技術深入淺出
 owner: "Mark_Mew"
 url: "https://markmew.github.io"
-baseurl: "/"
+baseurl: ""
 permalink: /:title/
 description: ""
 markdown: kramdown
