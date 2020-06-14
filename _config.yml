@@ -3,7 +3,7 @@ title: 技術深入淺出
 owner: "Mark_Mew"
 url: "https://markmew.github.io"
 baseurl: ""
-permalink: /:title/
+permalink: /posts/:title/
 description: ""
 markdown: kramdown
 webrick:
@@ -12,6 +12,7 @@ webrick:
 ## Global Variables
 email: "Mark_Mew@weco.net"
 github: "MarkMew"
+category: "/category"
 # path to: css/, fonts/, img/ and js/
 assets_path: "/assets" # i.e. "/assets" 
 statement: "Designed by DeerRIDER, All Rights Reserved"
