@@ -55,7 +55,8 @@ GEM
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
-    rexml (3.2.5)
+    rexml (3.2.8)
+      strscan (>= 3.0.9)
     rouge (3.5.1)
     ruby_dep (1.5.0)
     safe_yaml (1.0.5)
@@ -64,11 +65,11 @@ GEM
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
+    strscan (3.1.0)
     tzinfo (2.0.0)
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2019.1)
       tzinfo (>= 1.0.0)
-    wdm (0.1.1)
 
 PLATFORMS
   x64-mingw32
@@ -79,7 +80,6 @@ DEPENDENCIES
   jekyll-feed (~> 0.6)
   minima (~> 2.0)
   tzinfo-data
-  wdm (~> 0.1.0)
 
 BUNDLED WITH
    2.0.2
