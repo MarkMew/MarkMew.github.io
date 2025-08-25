@@ -5,7 +5,7 @@ toc: false
 home_btn: true
 btn_text: true
 footer: true
-title: "MARK_MEW 技術深入淺出"
+title: "MARK_MEW 雲端魔法師"
 author: ""
 permalink: /
 ---
