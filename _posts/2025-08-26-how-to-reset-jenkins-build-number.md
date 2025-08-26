@@ -2,7 +2,7 @@
 layout: post
 title: 如何重置 Jenkins 建置編號
 author: Mark_Mew
-category: Jenkins, CICD
+category: Jenkins | CICD
 date: 2025-8-26
 ---
 
