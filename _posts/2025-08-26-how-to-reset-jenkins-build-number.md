@@ -3,7 +3,7 @@ layout: post
 title: 如何重置 Jenkins 建置編號
 author: Mark_Mew
 category: Jenkins, CICD
-date: 2025-8-25
+date: 2025-8-26
 ---
 
 以往在做 Pipeline 建置時
@@ -42,3 +42,11 @@ item.updateNextBuildNumber(1)
 ~~或是覺得新的流水線滿滿的錯誤很討厭，想要欲蓋彌彰時~~
 
 都是一個簡單好用程式碼
+
+
+
+---
+
+參考資料
+
+[How to reset build number in jenkins?](https://stackoverflow.com/questions/20901791/how-to-reset-build-number-in-jenkins)
