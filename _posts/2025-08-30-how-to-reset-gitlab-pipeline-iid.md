@@ -2,8 +2,8 @@
 layout: post
 title: 如何重置 Gitlab CI_PIPELINE_IID
 author: Mark_Mew
-category: Jenkins | CICD
-date: 2025-8-27
+category: Gitlab | CICD
+date: 2025-8-30
 ---
 
 官方並不建議
@@ -102,6 +102,8 @@ GitLab Runner 會把更新後的 counter.txt 存回 cache
 > 2. 多個 pipeline 併發時可能有 race condition
 >    - 假設你同時跑兩個 pipeline，它們可能同時拿到同一份舊 cache，結果算出一樣的流水號。
 >    - 如果你的需求一定要「唯一且不重複」，可能需要改用 外部儲存（像資料庫、Git tag、Artifacts API）。
+
+
 ---
 參考文件：
 1. [change CI_PIPELINE_IID manually
