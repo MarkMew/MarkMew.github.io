@@ -104,7 +104,9 @@ GitLab Runner 會把更新後的 counter.txt 存回 cache
 >    - 如果你的需求一定要「唯一且不重複」，可能需要改用 外部儲存（像資料庫、Git tag、Artifacts API）。
 
 
+
 ---
+
 參考文件：
 1. [change CI_PIPELINE_IID manually
 ](https://gitlab.com/gitlab-org/gitlab/-/issues/25283)
