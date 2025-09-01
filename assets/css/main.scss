@@ -420,6 +420,10 @@ body {
       -o-animation: blktxt $blk-duration $blk-timing-function infinite;
     }
   }
+  code{
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
 }
 // screen max width <= 800 px
 @media screen and (max-width: 800px) {
