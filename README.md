@@ -1,47 +1,43 @@
-# PRoJEct-NeGYa
+# Chirpy Starter
 
-黑客风格的个人主页模板。
+[![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
+[![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
 
-版本： v1.01
+When installing the [**Chirpy**][chirpy] theme through [RubyGems.org][gem], Jekyll can only read files in the folders
+`_data`, `_layouts`, `_includes`, `_sass` and `assets`, as well as a small part of options of the `_config.yml` file
+from the theme's gem. If you have ever installed this theme gem, you can use the command
+`bundle info --path jekyll-theme-chirpy` to locate these files.
 
-## 特性
+The Jekyll team claims that this is to leave the ball in the user’s court, but this also results in users not being
+able to enjoy the out-of-the-box experience when using feature-rich themes.
 
-1. 狂拽酷炫
-2. Rouge支持代码高亮
-3. MathJax公式
-4. 文章索引
-5. 高度可定制化
-6. 加密内容（也可以把元素id改成密文，元素内容写“无该字段访问权限！”）
+To fully use all the features of **Chirpy**, you need to copy the other critical files from the theme's gem to your
+Jekyll site. The following is a list of targets:
 
-## 更新日志
+```shell
+.
+├── _config.yml
+├── _plugins
+├── _tabs
+└── index.html
+```
 
-2019.7.17：更新说明文件
+To save you time, and also in case you lose some files while copying, we extract those files/configurations of the
+latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so that you can start writing in minutes.
 
-2019.6.15：老子就做这一版，凑合能用得了，我可不改了啊！
+## Usage
 
-## 使用方法
+Check out the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy/wiki).
 
-* 下载或者fork到自己的github仓库里
-* 修改_config.yml文件
-* （自定义域名）修改CNAME文件
-* 修改pages/index.md文件，自定义主页
-* 删除_posts/文件夹里的文件，添加自己的文章
-* 同步到github远程仓库
+## Contributing
 
-## 工程结构
+This repository is automatically updated with new releases from the theme repository. If you encounter any issues or want to contribute to its improvement, please visit the [theme repository][chirpy] to provide feedback.
 
-功能和内容隔离TMD！
+## License
 
-网站内容：
-* _posts：文章
-* pages：页面
-* assets/img：图
+This work is published under [MIT][mit] License.
 
-功能样式：
-* _includes：子页面模块
-* _layouts：页面模板（单纯地组合子页面模块）
-* assets/css：样式表文件
-* assets/fonts：字体文件
-* assets/js：脚本文件
-* _config.yml：配置文件
-
+[gem]: https://rubygems.org/gems/jekyll-theme-chirpy
+[chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
+[CD]: https://en.wikipedia.org/wiki/Continuous_deployment
+[mit]: https://github.com/cotes2020/chirpy-starter/blob/master/LICENSE
