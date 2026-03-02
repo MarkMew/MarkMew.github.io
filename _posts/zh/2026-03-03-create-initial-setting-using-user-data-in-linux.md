@@ -1,4 +1,3 @@
-
 ---
 layout: post
 title: 使用 User Data 為 Linux EC2 建立初始資料
