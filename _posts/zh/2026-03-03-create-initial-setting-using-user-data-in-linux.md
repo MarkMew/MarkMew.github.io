@@ -77,13 +77,13 @@ chown -R $user:$user /home/$user/.ssh
 chmod -R go-rx /home/$user/.ssh
 ```
 
-> [!CAUTION]  
 > 執行失敗的話，EC2 還是可以正常啟動，只是結果不如預期，
 > 多行指令需要執行的話，從執行失敗的程式碼開始就會被中斷
+{: .prompt-warning}
 
 
-> [!NOTE]  
 > 想要查看自己輸入的 User Data 是甚麼，或是變數是否有正常載入，在登入 AWS Cloud Console 以後，在 EC2 的頁面中，點選 EC2 ID > 進到 EC2 明細頁中，可在 Actions > Instance settings > Edit user data 中找到
+{: .prompt-info}
 
 ---
 
