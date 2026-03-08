@@ -178,9 +178,9 @@ spec:
           restartPolicy: OnFailure
 ```
 
-> Container 執行中加入 `apk add --no-cache aws-cli` 不是個好想法
-> 至少會希望放到 initContainer 區塊
-> 在準備階段的時候就將需要的 Package 裝好
+> Container 執行中加入 `apk add --no-cache aws-cli` 不是個好想法，
+> 至少會希望放到 initContainer 區塊，
+> 在準備階段的時候就將需要的 Package 裝好，
 > 當然最好的方式還是自己打包製作一份 Container 存起來
 {: .prompt-warning}
 
