@@ -1,26 +1,26 @@
 ---
 layout: post
-title: EKS での cronjob 実行エラーによってワーカーノードの自動拡張が失敗するのを防ぐ方法
+title: How to prevent cronjob execution failure on EKS from causing Worker Node auto-extension failure
 author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]
 date: 2026-3-8
 ---
 
-最近、EKSにサービスを提供しているとき
+Recently when servicing EKS
 
-何かが起こりました。
+Something happened
 
-cronjob の実行の多くが失敗するからです。
+Because a lot of cronjob execution fails
 
-Worker Node を新しいデプロイメントを作成せずに自動的にスケーリングするようにします。
+Causes Worker Node to automatically scale without creating new deployments
 
-この問題の可能性には複数のレベルがあります。
+There are multiple levels of possibility of this problem
 
-1.ワーカーノード自動拡張戦略の解決
-2.Cronjob の実行に失敗すると、ポッドが大量に再起動し、API Server と kube-scheduler のパフォーマンスに影響が及びます。
+1. Resolve Worker Node Auto Expansion Strategies
+2. Cronjob execution failure results in massive Pod reboots impacting performance of API Server and kube-scheduler
 
-以下は問題を書くための cronjob です。
+Here is a cronjob for writing a problem
 ```yaml
 apiVersion: batch/v1
 kind: CronJob
@@ -72,55 +72,55 @@ spec:
           restartPolicy: OnFailure
 ```
 
-10 秒未満でデータベースをバックアップできます
+Back up the database in less than 10 seconds
 
-プログラムが実行できるかどうか
+Whether the program can run
 
-10 秒でエラーポッドを蓄積する
+Accumulate an Error Pod in 10 Seconds
 
-EKS Cluster が間違ったポッドによって 1 時間以内にハングアップすることが予想されます
+Expect EKS Cluster to be hung by a wrong Pod for less than an hour
 
-ワーカーノードの自動拡張戦略を解決する方法があるかもしれません
+Maybe there's a way to solve Worker Node's auto-expansion strategy
 
-しかし無制限成長ワーカーノード
+But Unlimited Growth Worker Node
 
-また、Cronjob の設定が誤る原因にもなります。
+It also causes a Cronjob to be misconfigured
 
-全体的なメンテナンスコストが大幅に増加する
+Significantly increase your overall maintenance costs
 
-上記のエラー設定により、2 つの設定補正が追加されるはずです。
+The above error settings should add two settings compensation
 
-1.同時実行ポリシー設定の追加
- 間違ったポッドが蓄積され続ける
- パラレルも可能です。
- 常にエラーが蓄積されるポッド
+1. Add ConcurrencyPolicy settings
+ Wrong Pod Continues to Accumulate
+ Parallel is also allowed
+ Pods that will constantly accumulate errors
 ```yaml
-spec:
-  concurrencyPolicy: Forbid
+Spec:
+ ConcurrencyPolicy: Forbid
 ```
 
-2。リトライポリシー設定の強化
- プログラムに問題があった場合
- 一度間違えると、間違え続けるだけです。
- プログラムが修正されるまで
- ここで、再試行回数とタイムアウト設定を追加する必要があります。
+2. Enhance Retry Policy Settings
+ If there is a problem with the program
+ Once it's wrong, it just keeps getting it wrong
+ Until the program is fixed
+ Here you should add a number of retries and timeout settings
 ```yaml
-spec:
-  backoffLimit: 2 # 失敗したら二度あきらめて、そこでずっと試してはいけない
-  activeDeadlineSeconds: 600 # 成功にかかわらず 10 分以上強制終了する
+Spec:
+ BackoffLimit: 2 # Give up twice if you fail, don't try all the time there
+ ActiveDeadlineSeconds: 600 # Kill it for more than ten minutes regardless of success
 ```
 
-3。成功履歴とエラー履歴の設定数を増やす
- この設定は必須ではありません。
- ただし、最終的にログはログサーバーに転送されます。
- そのため、サーバーには新しいレコードをいくつか保存するだけで済みます。
+3. Increase the number of success and error history settings
+ This setting is not mandatory
+ However, in the end Log will be forwarded to Log Server
+ Therefore, you only need to keep a few newer records on the server
 ```yaml
-spec:
-  failedJobsHistoryLimit: 1 # 失敗したジョブ履歴の上限
-  successfulJobsHistoryLimit: 3 # ジョブ成功履歴の上限
+Spec:
+ FailedJobHistoryLimit: 1
+ SuccessfulJob HistoryLimit: 3
 ```
 
-すべてプラスとその次はおおまかに次のようになります
+All plus and then are roughly as follows
 
 ```yaml
 apiVersion: batch/v1
@@ -135,8 +135,8 @@ spec:
   successfulJobsHistoryLimit: 3
   jobTemplate:
     spec:
-      activeDeadlineSeconds: 600 # 成功に関わらず 10 分以上強制終了する
-      backoffLimit: 2 # 失敗したら二度あきらめて、そこでずっと試してはいけない
+      activeDeadlineSeconds: 600 # Kill it for more than ten minutes regardless of success
+      backoffLimit: 2 # Give up twice if you fail, don't try all the time there
       template:
         spec:
           serviceAccountName: database-backup-sa
@@ -178,28 +178,28 @@ spec:
           restartPolicy: OnFailure
 ```
 
-> コンテナの実行に `apk add--no-cache aws-cli` を追加するのは良い考えではありませんが、
-> 少なくとも 1 人は InitContainer ブロックを入れたいと思っています。
-> 準備段階で、必要なパッケージを梱包し、
-> もちろん、一番いい方法は自分で容器を詰めることです。
+> Adding `apk add --no-cache aws-cli` to Container execution is not a good idea,
+> At least one would like to put the InitContainer block,
+> At the preparation stage, pack the required package,
+> Of course, the best way is to pack a container yourself.
 {: .prompt-warning}
 
-この例と改善の方向性はベストプラクティスではありません
+This example and the direction of improvement is not the best practice
 
-ソースはまだエラーのあるプログラムの修正を望んでいます。
+The source still wants to fix a program that has errors
 
-改善の方向性だけではない。
+The direction of improvement is not the only one
 
-しかし、今回はそこが議論のテーマではありません。
+But that's not the topic of discussion this time.
 
-今後、次の方法で別の説明を書く予定です。
+In the future, we will write another description in the following way.
 
-* 構文とスキーマの検証
+* Syntax and Schema Validation
 ``bash
-kubeconform -summary -strict my-cronjob.yaml
+cubeconform -summary -strict my-cronjob.yaml
 ```
-* キューブスコアやキューブリンターなどの SAST ツールで確認する
-*「ドライラン」の実行をシミュレート
+* Check with SAST tools such as kube-score or Kube-Linter
+* Simulate running `Dry Run`
 ```
 kubectl apply -f my-cronjob.yaml --dry-run=server
 ```
