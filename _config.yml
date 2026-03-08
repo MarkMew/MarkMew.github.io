@@ -171,6 +171,21 @@ collections:
     output: true
     sort_by: order
 
+plugins:
+  - jekyll-polyglot
+
+languages: ["zh-TW", "en", "ja"]
+default_lang: "zh-TW"
+lang_from_path: true
+parallel_localization: false
+exclude_from_localization:
+  - assets
+  - sitemap.xml
+  - robots.txt
+  - feed.xml
+  - app.min.js
+  - sw.min.js
+
 defaults:
   - scope:
       path: "" # An empty string here means all files in the project
@@ -182,6 +197,21 @@ defaults:
       # DO NOT modify the following parameter unless you are confident enough
       # to update the code of all other post links in this project.
       permalink: /posts/:title/
+  - scope:
+      path: _posts/zh
+      type: posts
+    values:
+      lang: zh-TW
+  - scope:
+      path: _posts/en
+      type: posts
+    values:
+      lang: en
+  - scope:
+      path: _posts/jp
+      type: posts
+    values:
+      lang: ja
   - scope:
       path: _drafts
     values:

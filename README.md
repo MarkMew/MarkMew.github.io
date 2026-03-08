@@ -29,6 +29,26 @@ latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so tha
 
 Check out the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy/wiki).
 
+## Multilingual posts (minimal setup)
+
+This site is configured with `jekyll-polyglot` and supports `zh-TW`, `en`, `ja`.
+
+For posts, place files under language folders:
+
+- `_posts/zh/` → `zh-TW`
+- `_posts/en/` → `en`
+- `_posts/jp/` → `ja`
+
+Example:
+
+- `_posts/en/2026-03-08-example.md`
+- `_posts/jp/2026-03-08-example.md`
+
+Notes:
+
+- `jp` is folder naming; language code remains `ja`.
+- Keep translated posts with the same date + slug naming style for easier maintenance.
+
 ## Contributing
 
 This repository is automatically updated with new releases from the theme repository. If you encounter any issues or want to contribute to its improvement, please visit the [theme repository][chirpy] to provide feedback.
