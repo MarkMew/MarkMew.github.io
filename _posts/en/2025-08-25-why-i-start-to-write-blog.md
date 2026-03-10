@@ -6,32 +6,29 @@ category: 雜談
 date: 2025-8-25
 ---
 
-Previously always held lofty ideas for writing technical articles
+I used to hold very lofty ideas about writing technical articles.
 
-I always think it takes great talent to write.
+I always felt that only truly brilliant people could write them,
+or that it took someone battle-hardened by years of experience.
 
-Or maybe there's a way for someone who's been through a hundred years of war.
+Later, I once talked about this with a manager.
 
-It wasn't until later that I talked to a supervisor about this.
+As we grow older, some people get married, some become managers,
+and gradually everyone’s life moves toward different goals.
 
-As age increases, some enter into marriage and become the boss
+I was the only one still working as a developer.
 
-Gradually, everyone's life is moving towards different goals
+With no one left to talk to about these things,
+he decided to leave something behind.
 
-Only I'm still in a development position
+At the time, I treated what he said like a fairy tale.
 
-I can't find someone to talk to. Leave something on my own
+But now I’ve reached the same stage myself.
 
-At the time I heard this saying only as a fairy tale
+My former classmates and comrades have all moved on to different phases of life.
+When there’s no longer anyone around to listen to me talk about these technical topics,
 
-Now I'm getting to this stage, too.
+I decided to write them down.
 
-Former classmates and combatants move to different stages of life
-
-When no one else listens to me talk about these technical things
-
-I decided to write it down.
-
-Tried many times and gave up many times
-
-But I believe it will last longer this time.
+I’ve tried many times and given up many times before,
+but I believe this time it will last longer.
