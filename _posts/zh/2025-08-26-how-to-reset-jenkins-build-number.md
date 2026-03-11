@@ -3,7 +3,7 @@ layout: post
 title: 如何重置 Jenkins 建置編號
 author: Mark_Mew
 category: [CICD, Jenkins]
-tags: [CICD, Gitlab]
+tags: [CICD, Jenkins]
 date: 2025-8-26
 ---
 
