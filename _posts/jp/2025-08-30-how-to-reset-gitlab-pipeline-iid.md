@@ -1,6 +1,6 @@
 ---
 layout: post
-title: GitLab CI_PIPELINE_IID をリセットする方法
+title: GitLab CI_PIPELINE_IID のリセットは可能？現実的な対応方法
 author: Mark_Mew
 category: [CICD, Gitlab]
 tags: [CICD, Gitlab]
