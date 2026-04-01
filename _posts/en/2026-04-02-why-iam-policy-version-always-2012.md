@@ -1,7 +1,7 @@
 ---
 layout: post
-title: AWS Trivia: Why Do IAM Policies Almost Always Use Version 2012-10-17?
-description: Why do AWS IAM policies almost always use Version 2012-10-17? This post explains what that version actually means, how it differs from service API versions, and what happens if you leave it out.
+title: "AWS Trivia: Why Do IAM Policies Almost Always Use Version 2012-10-17?"
+description: "Why do AWS IAM policies almost always use Version 2012-10-17? This post explains what that version actually means, how it differs from service API versions, and what happens if you leave it out."
 author: Mark_Mew
 categories: [AWS]
 tags: [AWS, IAM, IAM Policy, Policy Variables]

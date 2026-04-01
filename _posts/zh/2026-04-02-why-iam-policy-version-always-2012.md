@@ -1,7 +1,7 @@
 ---
 layout: post
-title: AWS 冷知識：IAM Policy Version 為什麼總是 2012-10-17？
-description: 為什麼 AWS IAM Policy 的 Version 常見 2012-10-17？本文快速解析版本真正意義、與 AWS API 版本差異，以及不寫 Version 的影響。
+title: "AWS 冷知識：IAM Policy Version 為什麼總是 2012-10-17？"
+description: "為什麼 AWS IAM Policy 的 Version 常見 2012-10-17？本文快速解析版本真正意義、與 AWS API 版本差異，以及不寫 Version 的影響。"
 author: Mark_Mew
 categories: [AWS]
 tags: [AWS, IAM, IAM Policy, Policy Variables]

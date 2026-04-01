@@ -1,7 +1,7 @@
 ---
 layout: post
-title: AWS豆知識: IAM Policy の Version がいつも 2012-10-17 なのはなぜか
-description: AWS IAM Policy の Version がなぜ 2012-10-17 なのかを解説します。Version の意味、各 AWS サービスの API バージョンとの違い、Version を省略した場合の挙動までまとめて確認できます。
+title: "AWS豆知識: IAM Policy の Version がいつも 2012-10-17 なのはなぜか"
+description: "AWS IAM Policy の Version がなぜ 2012-10-17 なのかを解説します。Version の意味、各 AWS サービスの API バージョンとの違い、Version を省略した場合の挙動までまとめて確認できます。"
 author: Mark_Mew
 categories: [AWS]
 tags: [AWS, IAM, IAM Policy, Policy Variables]
