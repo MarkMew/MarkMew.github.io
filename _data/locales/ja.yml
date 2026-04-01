@@ -5,6 +5,7 @@
 site:
   title: クラウド魔法使い
   tagline: クラウドに特化したエンジニア
+  description: AWS、Kubernetes、CI/CD、クラウドインフラに関する実践的なメモと解説をまとめています。
 
 layout:
   post: 投稿
