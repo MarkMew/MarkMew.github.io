@@ -1,9 +1,11 @@
 ﻿---
 layout: post
 title: "AWS EKS RBAC 教學：為特定 Namespace 新增 Admin 使用者"
+description: "本文示範如何在 AWS EKS 中為特定 Namespace 新增 Admin 使用者，從 IAM Policy、Access Entry 到 Role、RoleBinding 與 ClusterRole 設定一次說明。"
 date: 2026-03-31
 categories: [K8S]
 tags: [EKS, K8S, RBAC, IAM]
+keywords: [AWS EKS RBAC, EKS namespace admin, Kubernetes RBAC, EKS Access Entry, IAM User, RoleBinding, ClusterRoleBinding]
 ---
 
 在管理 Kubernetes 時，偶爾會需要建立帳號給其他使用者共同管理，當我們需要建立一個 namespace 的最大權限時，除了 Role 以外，也需要考慮到 Cluster Role。

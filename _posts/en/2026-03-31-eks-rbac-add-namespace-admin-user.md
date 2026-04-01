@@ -1,9 +1,11 @@
 ---
 layout: post
 title: "AWS EKS RBAC Guide: Add a Namespace Admin User"
+description: "Learn how to add an admin user for a specific namespace in AWS EKS, including IAM Policy, EKS Access Entry, Role, RoleBinding, ClusterRole, and ClusterRoleBinding setup."
 date: 2026-03-31
 categories: [K8S]
 tags: [EKS, K8S, RBAC, IAM]
+keywords: [AWS EKS RBAC, EKS namespace admin, Kubernetes RBAC, EKS Access Entry, IAM User, RoleBinding, ClusterRoleBinding]
 ---
 
 When managing Kubernetes, you may occasionally need to create accounts for other users to co-manage the cluster. When you need to grant full admin access within a specific namespace, you need to configure not only a `Role` but also a `ClusterRole` for minimum cluster-level permissions.
