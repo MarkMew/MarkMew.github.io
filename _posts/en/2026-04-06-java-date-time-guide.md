@@ -5,7 +5,7 @@ description: "A practical guide to handling date and time in Java, from the lega
 author: Mark_Mew
 categories: [Java]
 tags: [Java]
-keywords: [Java date time, Java datetime, java.time, Date, Calendar, SimpleDateFormat, Instant, LocalDate, ZonedDateTime]
+keywords: [Java date and time, Java datetime, java.time, Java Date, Java Calendar, SimpleDateFormat, Instant, LocalDate, ZonedDateTime]
 date: 2026-4-6
 ---
 
