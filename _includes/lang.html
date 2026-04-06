@@ -5,6 +5,10 @@
   {% assign lang = site.active_lang %}
 {% elsif site.data.locales[page.lang] %}
   {% assign lang = page.lang %}
+{% elsif page.url == '/en/' or page.url contains '/en/' %}
+  {% assign lang = 'en' %}
+{% elsif page.url == '/ja/' or page.url contains '/ja/' %}
+  {% assign lang = 'ja' %}
 {% elsif site.data.locales[site.lang] %}
   {% assign lang = site.lang %}
 {% else %}
