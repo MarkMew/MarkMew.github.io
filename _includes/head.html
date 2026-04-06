@@ -25,6 +25,10 @@
   {%- capture localized_og_locale_tag -%}<meta property="og:locale" content="{{ localized_og_locale }}" />{%- endcapture -%}
   {% assign seo_tags = seo_tags | replace: default_og_locale_tag, localized_og_locale_tag %}
 
+  {% if page.keywords %}
+    <meta name="keywords" content="{{ page.keywords | join: ', ' | escape }}">
+  {% endif %}
+
   <!-- Setup Open Graph image -->
 
   {% if page.image %}
