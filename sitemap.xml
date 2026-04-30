@@ -4,6 +4,23 @@ sitemap: false
 ---
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>{{ site.url }}/</loc>
+    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  {% assign language_homes = '/en/,/ja/' | split: ',' %}
+  {% for home in language_homes %}
+  <url>
+    <loc>{{ site.url }}{{ home }}</loc>
+    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  {% endfor %}
+
   {% for post in site.posts %}
   {% assign post_lang = post.lang | default: site.default_lang %}
   {% if post_lang == site.default_lang %}
@@ -16,22 +33,35 @@ sitemap: false
     {% if post.last_modified_at %}<lastmod>{{ post.last_modified_at | date_to_xmlschema }}</lastmod>
     {% elsif post.date %}<lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
     {% endif %}
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   {% endfor %}
-  {% for page in site.pages %}
-  {% assign page_last_char = page.url | slice: -1, 1 %}
-  {% assign page_last_five = page.url | slice: -5, 5 %}
-  {% unless page.sitemap == false or page.url contains 'sitemap' or page.url contains 'feed' or page.url contains '404' or (page_last_char != '/' and page_last_five != '.html') %}
-  {% assign page_lang = page.lang | default: site.default_lang %}
-  {% if page_lang == site.default_lang %}
-    {% assign page_url = page.url | remove: 'index.html' %}
+
+  {% for tab in site.tabs %}
+  {% assign tab_lang = tab.lang | default: site.default_lang %}
+  {% if tab_lang == site.default_lang %}
+    {% assign tab_url = tab.url | remove: 'index.html' %}
   {% else %}
-    {% assign page_url = '/' | append: page_lang | append: page.url | remove: 'index.html' %}
+    {% assign tab_url = '/' | append: tab_lang | append: tab.url | remove: 'index.html' %}
   {% endif %}
   <url>
-    <loc>{{ site.url }}{{ page_url }}</loc>
-    {% if page.last_modified_at %}<lastmod>{{ page.last_modified_at | date_to_xmlschema }}</lastmod>{% endif %}
+    <loc>{{ site.url }}{{ tab_url }}</loc>
+    {% if tab.last_modified_at %}<lastmod>{{ tab.last_modified_at | date_to_xmlschema }}</lastmod>
+    {% else %}<lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+    {% endif %}
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
-  {% endunless %}
+  {% endfor %}
+
+  {% assign hub_urls = '/en/archives/,/en/categories/,/en/tags/,/ja/archives/,/ja/categories/,/ja/tags/' | split: ',' %}
+  {% for hub_url in hub_urls %}
+  <url>
+    <loc>{{ site.url }}{{ hub_url }}</loc>
+    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
   {% endfor %}
 </urlset>
