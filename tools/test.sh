@@ -60,6 +60,8 @@ main() {
   JEKYLL_ENV=production bundle exec jekyll b \
     -d "$SITE_DIR$_baseurl" -c "$_config"
 
+  ruby tools/beautify_sitemap.rb "$SITE_DIR$_baseurl"
+
   # test
   bundle exec htmlproofer "$SITE_DIR" \
     --disable-external \
