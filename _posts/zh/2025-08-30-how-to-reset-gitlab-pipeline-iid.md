@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 如何重置 Gitlab CI_PIPELINE_IID
+description: "如何重置 Gitlab CI_PIPELINE_IID. Practical notes and implementation steps."
 author: Mark_Mew
 category: [CICD, Gitlab]
 tags: [CICD, Gitlab]

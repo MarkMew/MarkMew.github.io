@@ -1,6 +1,7 @@
 ---
 layout: post
-title: String Reversal
+
+description: "String Reversal. Practical steps, common pitfalls, and commands you can apply quickly."
 author: Mark_Mew
 category: Tricks
 date: 2020-6-1

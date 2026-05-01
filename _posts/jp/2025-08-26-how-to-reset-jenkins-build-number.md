@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Jenkins のビルド番号をリセットする方法
+description: "Jenkins のビルド番号をリセットする方法. Practical notes and implementation steps."
 author: Mark_Mew
 category: [CICD, Jenkins]
 tags: [CICD, Jenkins]

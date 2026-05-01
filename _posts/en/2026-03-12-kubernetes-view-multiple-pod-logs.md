@@ -1,6 +1,7 @@
 ---
 layout: post
-title: "Kubernetes Pod Logs Guide: Quickly View Logs from Multiple Pods with kubectl"
+
+description: "Kubernetes Pod Logs Guide: Quickly View Logs from Multiple Pods with kubectl. Practical steps, common pitfalls, and commands you can apply quickly."
 date: 2026-03-12
 categories: [K8S]
 tags: [EKS, K8S]

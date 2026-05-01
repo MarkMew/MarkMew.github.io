@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 使用 User Data 為 Linux EC2 建立初始資料
+description: "使用 User Data 為 Linux EC2 建立初始資料. Practical notes and implementation steps."
 author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]

@@ -1,6 +1,7 @@
 ---
 layout: post
-title: How to prevent cronjob execution failure on EKS from causing Worker Node auto-extension failure
+
+description: "How to prevent cronjob execution failure on EKS from causing Worker Node auto-extension failure. Practical steps, common pitfalls, and commands you can apply quickly."
 author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]

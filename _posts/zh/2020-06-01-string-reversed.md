@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 字串反轉
+description: "字串反轉. Practical notes and implementation steps."
 author: Mark_Mew
 category: 黑魔法
 date: 2020-6-1

@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Containers in EC2 Cannot Obtain Expected Permissions via IAM Instance Profile Role
+
+description: "Containers in EC2 Cannot Obtain Expected Permissions via IAM Instance Profile Role. Practical steps, common pitfalls, and commands you can apply quickly."
 author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]
@@ -25,7 +26,7 @@ If everything works correctly, you should see:
 <IAM Profile Name>
 ```
 
-However, after enabling an EC2 feature — IMDSv2,
+However, after enabling an EC2 feature ??IMDSv2,
 
 a container running inside EC2 may fail to obtain credentials.
 
@@ -90,11 +91,11 @@ Exactly. When running Docker on EC2, there are other possible causes as well.
     But from a Docker container to metadata, there is usually one extra network hop:
     ```
     container
-        ↓
+        ??
     docker bridge
-        ↓
+        ??
     EC2 instance network
-        ↓
+        ??
     169.254.169.254
     ```
 
@@ -118,7 +119,7 @@ Exactly. When running Docker on EC2, there are other possible causes as well.
 
 3. Docker network policy / iptables
 
-    I’m not very familiar with this part yet.
+    I? not very familiar with this part yet.
 
     I may come back and add details in the future.
 
@@ -132,11 +133,11 @@ In the pipeline, container network flow looked like this:
 
 ```
 container
-   ↓
+   ??
 docker bridge (docker0)
-   ↓
+   ??
 host network
-   ↓
+   ??
 IMDS
 ```
 
@@ -144,11 +145,11 @@ When the token response came back:
 
 ```
 IMDS
- ↓
+ ??
 host network
- ↓
+ ??
 docker bridge
- ↓
+ ??
 container
 ```
 

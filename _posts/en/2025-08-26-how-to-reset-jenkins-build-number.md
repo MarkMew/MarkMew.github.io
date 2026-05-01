@@ -1,6 +1,7 @@
 ---
 layout: post
-title: How to Reset Jenkins Build Numbers
+
+description: "How to Reset Jenkins Build Numbers. Practical steps, common pitfalls, and commands you can apply quickly."
 author: Mark_Mew
 category: [CICD, Jenkins]
 tags: [CICD, Jenkins]

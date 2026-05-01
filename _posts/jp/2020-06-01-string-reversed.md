@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 文字列の反転
+description: "文字列の反転. Practical notes and implementation steps."
 author: Mark_Mew
 category: 小技
 date: 2020-6-1

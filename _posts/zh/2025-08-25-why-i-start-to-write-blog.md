@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 為什麼我開始撰寫技術文章
+description: "為什麼我開始撰寫技術文章. Practical notes and implementation steps."
 author: Mark_Mew
 category: 雜談
 date: 2025-8-25

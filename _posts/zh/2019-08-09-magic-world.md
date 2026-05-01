@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 避免使用魔術數字
+description: "避免使用魔術數字. Practical notes and implementation steps."
 author: Mark_Mew
 category: 重構
 tags: [refactory]

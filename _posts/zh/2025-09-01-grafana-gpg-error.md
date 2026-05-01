@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Grafana GPG Key 過期
+description: "Grafana GPG Key 過期. Practical notes and implementation steps."
 author: Mark_Mew
 category: Grafana
 tags: [Grafana]

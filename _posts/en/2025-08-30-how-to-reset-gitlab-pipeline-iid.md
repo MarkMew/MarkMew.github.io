@@ -1,6 +1,7 @@
 ---
 layout: post
-title: "GitLab CI_PIPELINE_IID Reset: What You Can (and Can’t) Do"
+
+description: "GitLab CI_PIPELINE_IID Reset: What You Can (and Can?) Do. Practical steps, common pitfalls, and commands you can apply quickly."
 author: Mark_Mew
 category: [CICD, Gitlab]
 tags: [CICD, Gitlab]

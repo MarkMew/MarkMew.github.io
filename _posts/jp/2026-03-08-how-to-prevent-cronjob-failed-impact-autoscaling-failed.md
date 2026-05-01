@@ -1,6 +1,7 @@
 ---
 layout: post
 title: EKS での cronjob 実行エラーによってワーカーノードの自動拡張が失敗するのを防ぐ方法
+description: "EKS での cronjob 実行エラーによってワーカーノードの自動拡張が失敗するのを防ぐ方法. Practical notes and implementation steps."
 author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]

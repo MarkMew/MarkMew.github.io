@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Kubernetes Pod Logs 教學：快速查看多個 Pod Logs（kubectl 實戰）"
+description: "Kubernetes Pod Logs 教學：快速查看多個 Pod Logs（kubectl 實戰）. Practical notes and implementation steps."
 date: 2026-03-12
 categories: [K8S]
 tags: [EKS, K8S]

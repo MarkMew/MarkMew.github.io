@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 如何重置 Jenkins 建置編號
+description: "如何重置 Jenkins 建置編號. Practical notes and implementation steps."
 author: Mark_Mew
 category: [CICD, Jenkins]
 tags: [CICD, Jenkins]

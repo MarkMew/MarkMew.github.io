@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 私が技術記事を書き始めた理由
+description: "私が技術記事を書き始めた理由. Practical notes and implementation steps."
 author: Mark_Mew
 category: 雜談
 date: 2025-8-25

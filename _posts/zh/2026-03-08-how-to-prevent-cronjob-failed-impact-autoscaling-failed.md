@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 如何避免 EKS 上 的 cronjob 執行失敗導致 Worker Node 自動擴展失敗
+description: "如何避免 EKS 上 的 cronjob 執行失敗導致 Worker Node 自動擴展失敗. Practical notes and implementation steps."
 author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]

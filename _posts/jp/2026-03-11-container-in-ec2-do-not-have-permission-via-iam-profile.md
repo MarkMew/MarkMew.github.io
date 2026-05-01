@@ -1,6 +1,7 @@
 ---
 layout: post
 title: EC2 上のコンテナが IAM Instance Profile Role 経由で必要な権限を取得できない
+description: "EC2 上のコンテナが IAM Instance Profile Role 経由で必要な権限を取得できない. Practical notes and implementation steps."
 author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]
