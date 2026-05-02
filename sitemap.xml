@@ -22,13 +22,21 @@ sitemap: false
   </url>
   {% endfor %}
 
-  {% for post in site.posts %}
-  {% assign post_lang = post.lang | default: site.default_lang %}
-  {% if post_lang == site.default_lang %}
-    {% assign post_url = post.url | remove: 'index.html' %}
+  {% assign all_posts = site.collections['posts'].docs %}
+  {% for post in all_posts %}
+  {% assign post_path = post.path %}
+
+  {% if post_path contains '_posts/zh/' %}
+    {% assign post_url = '/posts/' | append: post.slug | append: '/' %}
+  {% elsif post_path contains '_posts/en/' %}
+    {% assign post_url = '/en/posts/' | append: post.slug | append: '/' %}
+  {% elsif post_path contains '_posts/jp/' %}
+    {% assign post_url = '/ja/posts/' | append: post.slug | append: '/' %}
   {% else %}
-    {% assign post_url = '/' | append: post_lang | append: post.url | remove: 'index.html' %}
+    {% assign post_url = '' %}
   {% endif %}
+
+  {% if post_url != '' %}
   <url>
     <loc>{{ site.url }}{{ post_url }}</loc>
     {% if post.last_modified_at %}<lastmod>{{ post.last_modified_at | date_to_xmlschema }}</lastmod>
@@ -37,6 +45,7 @@ sitemap: false
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
+  {% endif %}
   {% endfor %}
 
   {% for tab in site.tabs %}
