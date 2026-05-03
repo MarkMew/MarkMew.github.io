@@ -7,7 +7,7 @@ categories: [AWS]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Patch Manager, EC2, Auto Patching]
 lang: ja
-date: 2026-05-03 09:00:00 +0800
+date: 2026-05-03
 ---
 
 Session Manager を設定し、SSM Agent が稼働している状態まで来たら、

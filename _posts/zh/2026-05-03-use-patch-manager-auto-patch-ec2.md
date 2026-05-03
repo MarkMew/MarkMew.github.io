@@ -7,7 +7,7 @@ categories: [AWS]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Patch Manager, EC2, Auto Patching]
 lang: zh-TW
-date: 2026-05-03 09:00:00 +0800
+date: 2026-05-03
 ---
 
 前一篇介紹完 Systems Manager 的 Session Manager 設定後，
