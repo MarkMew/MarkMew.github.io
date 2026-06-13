@@ -5,6 +5,7 @@
 
 require 'fileutils'
 require 'yaml'
+require 'date'
 require 'time'
 
 # Allow YAML to deserialize Date objects
@@ -38,7 +39,11 @@ if Dir.exist?(posts_base)
         # Extract YAML frontmatter
         if content =~ /\A---\s*\n(.*?)\n---\s*\n/m
           frontmatter_str = $1
-          post_data = YAML.load(frontmatter_str) || {}
+          post_data = YAML.safe_load(
+            frontmatter_str,
+            permitted_classes: [Date, Time],
+            aliases: true
+          ) || {}
         else
           next
         end
@@ -81,8 +86,10 @@ if Dir.exist?(posts_base)
           lastmod: lastmod,
           lang: lang_code
         }
+      rescue Psych::Exception => e
+        warn "Sitemap: Error parsing #{post_path}: #{e.message}"
       rescue => e
-        # Silently skip errors to avoid cluttering output
+        warn "Sitemap: Error processing #{post_path}: #{e.message}"
       end
     end
   end

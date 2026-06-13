@@ -4,6 +4,7 @@
 
 require 'fileutils'
 require 'yaml'
+require 'date'
 require 'time'
 
 Jekyll::Hooks.register :site, :post_write do |site|
@@ -33,7 +34,11 @@ Jekyll::Hooks.register :site, :post_write do |site|
           # Extract YAML frontmatter
           if content =~ /\A---\s*\n(.*?)\n---\s*\n/m
             frontmatter_str = $1
-            post_data = YAML.safe_load(frontmatter_str) || {}
+            post_data = YAML.safe_load(
+              frontmatter_str,
+              permitted_classes: [Date, Time],
+              aliases: true
+            ) || {}
           else
             next
           end
@@ -76,6 +81,8 @@ Jekyll::Hooks.register :site, :post_write do |site|
             lastmod: lastmod,
             lang: lang_code
           }
+        rescue Psych::Exception => e
+          Jekyll.logger.warn("Sitemap: Error parsing #{post_path}: #{e.message}")
         rescue => e
           Jekyll.logger.warn("Sitemap: Error processing #{post_path}: #{e.message}")
         end
