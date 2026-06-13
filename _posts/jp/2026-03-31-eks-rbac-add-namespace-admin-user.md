@@ -6,6 +6,7 @@ date: 2026-03-31
 categories: [K8S]
 tags: [EKS, K8S, RBAC, IAM]
 keywords: [AWS EKS RBAC, EKS namespace admin, Kubernetes RBAC, EKS Access Entry, IAM User, RoleBinding, ClusterRoleBinding]
+lang: ja
 ---
 
 Kubernetes を管理していると、他のユーザーに共同管理用のアカウントを作成する必要が出てくることがあります。特定 namespace への最大権限を付与する場合、`Role` だけでなく `ClusterRole` も考慮する必要があります。

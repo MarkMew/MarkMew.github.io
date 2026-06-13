@@ -7,6 +7,7 @@ categories: [AWS]
 tags: [AWS, IAM, IAM Role]
 keywords: [IAM Role, Switch Role]
 date: 2026-4-30
+lang: en
 ---
 
 There are many ways to sign in to AWS Cloud Console:

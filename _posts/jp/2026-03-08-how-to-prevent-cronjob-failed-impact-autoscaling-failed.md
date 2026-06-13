@@ -6,6 +6,7 @@ author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]
 date: 2026-3-8
+lang: ja
 ---
 
 最近、EKSにサービスを提供しているとき

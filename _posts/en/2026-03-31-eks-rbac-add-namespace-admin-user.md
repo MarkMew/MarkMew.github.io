@@ -6,6 +6,7 @@ date: 2026-03-31
 categories: [K8S]
 tags: [EKS, K8S, RBAC, IAM]
 keywords: [AWS EKS RBAC, EKS namespace admin, Kubernetes RBAC, EKS Access Entry, IAM User, RoleBinding, ClusterRoleBinding]
+lang: en
 ---
 
 When managing Kubernetes, you may occasionally need to create accounts for other users to co-manage the cluster. When you need to grant full admin access within a specific namespace, you need to configure not only a `Role` but also a `ClusterRole` for minimum cluster-level permissions.

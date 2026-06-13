@@ -7,6 +7,7 @@ categories: [AWS]
 tags: [AWS, IAM, IAM Role]
 keywords: [AWS, IAM, IAM Role, AWS権限, 信頼関係, IAM ポリシー]
 date: 2026-4-29
+lang: ja
 ---
 
 クラウドを始めたばかりのユーザーなら、

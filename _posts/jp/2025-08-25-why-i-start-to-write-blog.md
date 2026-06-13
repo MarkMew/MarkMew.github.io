@@ -5,6 +5,7 @@ description: "私が技術記事を書き始めた理由. Practical notes and im
 author: Mark_Mew
 category: 雜談
 date: 2025-8-25
+lang: ja
 ---
 
 以前の私は、技術記事を書くことにどこか特別なイメージを持っていました。

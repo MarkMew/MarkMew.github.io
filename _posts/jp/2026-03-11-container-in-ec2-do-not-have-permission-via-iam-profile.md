@@ -6,6 +6,7 @@ author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]
 date: 2026-3-11
+lang: ja
 ---
 
 EC2 上で AWS リソースを操作する場合、

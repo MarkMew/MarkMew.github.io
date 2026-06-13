@@ -7,6 +7,7 @@ categories: [Java]
 tags: [Java]
 keywords: [Java 日付時刻, Java 日付と時刻, Java datetime, java.time, Java Date, Java Calendar, SimpleDateFormat, Instant, LocalDate, ZonedDateTime]
 date: 2026-4-6
+lang: ja
 ---
 
 開発をしていると、日付や時刻の扱いは避けて通れません。

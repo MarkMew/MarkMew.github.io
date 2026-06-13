@@ -6,6 +6,7 @@ author: Mark_Mew
 category: [CICD, Gitlab]
 tags: [CICD, Gitlab]
 date: 2025-8-30
+lang: ja
 ---
 
 公式には推奨されておらず、

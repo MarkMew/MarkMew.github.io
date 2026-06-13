@@ -7,6 +7,7 @@ categories: [AWS, S3]
 tags: [AWS, S3, S3 Vector, RAG]
 keywords: [AWS, S3, S3 Vector, RAG]
 date: 2026-4-18
+lang: ja
 ---
 
 S3（Simple Storage Service）は、AWS が初期から提供している代表的なサービスの一つです。

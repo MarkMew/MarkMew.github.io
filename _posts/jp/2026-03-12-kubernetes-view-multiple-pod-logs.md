@@ -5,6 +5,7 @@ description: "Kubernetes Pod Logs 入門：kubectl で複数 Pod のログを素
 date: 2026-03-12
 categories: [K8S]
 tags: [EKS, K8S]
+lang: ja
 ---
 
 Kubernetes でデバッグするとき、Pod logs の確認は最もよく行う作業の 1 つです。サービスに複数 Pod（Deployment の replicas など）がある場合、複数 Pod の logs をまとめて確認したいことがあります。

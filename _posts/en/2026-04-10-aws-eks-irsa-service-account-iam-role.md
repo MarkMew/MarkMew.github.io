@@ -7,6 +7,7 @@ categories: [K8S]
 tags: [EKS, K8S, IAM]
 keywords: [AWS EKS IRSA, EKS IRSA guide, EKS Service Account IAM Role, EKS Pod AWS permissions, EKS Pod access S3, EKS Secrets Manager, IAM Roles for Service Accounts, Kubernetes Service Account IAM Role]
 date: 2026-4-10
+lang: en
 ---
 
 If you manage AWS infrastructure, setting up a CronJob to back up a database is a pretty normal requirement.

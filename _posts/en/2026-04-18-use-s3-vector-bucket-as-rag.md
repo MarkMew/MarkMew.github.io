@@ -7,6 +7,7 @@ categories: [AWS, S3]
 tags: [AWS, S3, S3 Vector, RAG]
 keywords: [AWS, S3, S3 Vector, RAG]
 date: 2026-4-18
+lang: en
 ---
 
 S3, short for Simple Storage Service, is one of the earliest AWS services.

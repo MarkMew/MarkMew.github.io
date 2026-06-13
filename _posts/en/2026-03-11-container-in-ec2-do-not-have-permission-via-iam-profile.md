@@ -6,6 +6,7 @@ author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]
 date: 2026-3-11
+lang: en
 ---
 
 When you need to access AWS resources from workloads running on EC2,

@@ -5,6 +5,7 @@ description: "Why I Started Writing Tech Articles. Practical steps, common pitfa
 author: Mark_Mew
 category: ??
 date: 2025-8-25
+lang: en
 ---
 
 I used to hold very lofty ideas about writing technical articles.

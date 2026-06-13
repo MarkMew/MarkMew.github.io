@@ -7,6 +7,7 @@ categories: [AWS]
 tags: [AWS, IAM, IAM Policy, Policy Variables]
 keywords: [AWS IAM Policy Version, 2012-10-17, IAM Policy Variables, IAM JSON Policy, AWS Security]
 date: 2026-4-2
+lang: en
 ---
 
 If you work with AWS, you have probably seen IAM policies with `Version` set to `2012-10-17` over and over again.

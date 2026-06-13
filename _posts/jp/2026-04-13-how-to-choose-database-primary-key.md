@@ -7,6 +7,7 @@ categories: [database]
 tags: [primary key, uuid]
 keywords: [primary key, データベース主キー, 主キー設計, auto increment, UUID, 自然キー, surrogate key, natural key, データベース設計]
 date: 2026-4-13
+lang: ja
 ---
 
 データベース設計を始めると、かなり早い段階でぶつかるのが「Primary Key は何を使うべきか」という問題です。

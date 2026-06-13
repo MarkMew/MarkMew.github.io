@@ -7,6 +7,7 @@ categories: [K8S]
 tags: [EKS, K8S, IAM]
 keywords: [AWS EKS IRSA, EKS IRSA 入門, EKS Service Account IAM Role, EKS Pod AWS 権限, EKS Pod S3 アクセス, EKS Secrets Manager, IAM Roles for Service Accounts, Kubernetes Service Account IAM Role]
 date: 2026-4-10
+lang: ja
 ---
 
 AWS の運用をしていると、データベースのバックアップを定期実行する CronJob を用意したい場面はよくあります。

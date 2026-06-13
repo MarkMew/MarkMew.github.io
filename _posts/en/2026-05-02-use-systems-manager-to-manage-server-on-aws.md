@@ -7,6 +7,7 @@ categories: [AWS]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Session Manager, EC2]
 date: 2026-5-2
+lang: en
 ---
 
 When we talk about on-prem virtualization management, tools like `VMWare` and `Hyper-V` usually come to mind first.

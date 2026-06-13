@@ -7,6 +7,7 @@ categories: [AWS]
 tags: [AWS, IAM, IAM Role]
 keywords: [AWS, IAM, IAM Role, AWS permission, trust relationship, IAM policy]
 date: 2026-4-29
+lang: en
 ---
 
 If you're new to cloud computing,

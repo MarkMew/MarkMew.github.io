@@ -5,6 +5,7 @@ description: "Kubernetes Pod Logs Guide: Quickly View Logs from Multiple Pods wi
 date: 2026-03-12
 categories: [K8S]
 tags: [EKS, K8S]
+lang: en
 ---
 
 When debugging in Kubernetes, checking pod logs is one of the most common tasks. If a service has multiple pods (for example, replicas created by a Deployment), you may need to view logs from multiple pods at once.

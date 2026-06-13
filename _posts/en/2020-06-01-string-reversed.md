@@ -5,6 +5,7 @@ description: "String Reversal. Practical steps, common pitfalls, and commands yo
 author: Mark_Mew
 category: Tricks
 date: 2020-6-1
+lang: en
 ---
 
 Last week, I saw an interesting [post](https://www.facebook.com/groups/f2e.tw/permalink/2913375802033099/) in a frontend community.

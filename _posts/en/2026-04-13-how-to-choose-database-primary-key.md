@@ -7,6 +7,7 @@ categories: [database]
 tags: [primary key, uuid]
 keywords: [primary key, database primary key, primary key design, auto increment, UUID, natural key, surrogate key, database design, database schema]
 date: 2026-4-13
+lang: en
 ---
 
 When you first start designing a database, one question comes up very quickly: what should you use as the primary key?

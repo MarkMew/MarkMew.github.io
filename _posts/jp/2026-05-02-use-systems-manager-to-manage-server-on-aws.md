@@ -7,6 +7,7 @@ categories: [AWS]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Session Manager, EC2]
 date: 2026-5-2
+lang: ja
 ---
 
 オンプレ環境で仮想化基盤を管理する場合、

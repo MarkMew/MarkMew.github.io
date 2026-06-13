@@ -6,6 +6,7 @@ author: Mark_Mew
 category: [CICD, Gitlab]
 tags: [CICD, Gitlab]
 date: 2025-8-30
+lang: en
 ---
 
 GitLab does not recommend this,

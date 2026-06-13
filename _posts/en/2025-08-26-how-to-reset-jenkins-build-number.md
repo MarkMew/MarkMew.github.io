@@ -6,6 +6,7 @@ author: Mark_Mew
 category: [CICD, Jenkins]
 tags: [CICD, Jenkins]
 date: 2025-8-26
+lang: en
 ---
 
 When I used to run pipeline builds,
