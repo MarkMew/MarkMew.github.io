@@ -122,9 +122,9 @@ Git なんて何年も前からあるのに、
 
 たとえば AWS Lambda の開発です。
 
-AWS Cloud Console はとても便利で、
+AWS Cloud Console は便利な開発環境を提供しており、
 
-開発者は AWS Lambda 上で直接コードを編集できます。
+開発者はブラウザ上の IDE でコードを編集し、そのままデプロイできます。
 
 Python の場合、`AWSLambdaPowertoolsPythonV2` のようなパッケージを使えば、
 

@@ -114,9 +114,9 @@ may still not have their code properly managed in a version control system.
 
 AWS Lambda development is a common example.
 
-The AWS Cloud Console provides a convenient environment
+The AWS Cloud Console provides a convenient development environment
 
-where developers can edit code directly inside AWS Lambda.
+where developers can edit code in the browser-based IDE and deploy it directly.
 
 Python developers can even use packages such as `AWSLambdaPowertoolsPythonV2`,
 

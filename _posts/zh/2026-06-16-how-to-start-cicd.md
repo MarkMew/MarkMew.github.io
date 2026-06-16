@@ -111,9 +111,9 @@ Git 也不知道是幾年前的東西了，
 
 例如 AWS Lambda 的開發。
 
-AWS Cloud Console 提供了很方便的環境，
+AWS Cloud Console 提供了很方便的開發環境，
 
-讓開發者可以直接在 AWS Lambda 上修改程式。
+讓開發者透過網頁的 IDE 修改程式後就可以直接佈署。
 
 甚至 Python 開發者可以直接使用套件包 `AWSLambdaPowertoolsPythonV2`，
 
