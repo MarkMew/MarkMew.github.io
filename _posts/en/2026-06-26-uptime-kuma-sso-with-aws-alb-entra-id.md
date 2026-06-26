@@ -314,8 +314,8 @@ One important point: after disabling Uptime Kuma's built-in authentication, or a
 
 ## References
 
-1. [uptime-kuma | GitHub](https://github.com/louislam/uptime-kuma)
-2. [Boost Website Reliability with Uptime Kuma | Calpa's Blog](https://calpa.me/blog/uptime-kuma-boost-website-reliability/)
-3. [Set Up Uptime Kuma to Monitor Service Availability | WebDong](https://www.webdong.dev/zh-tw/post/uptime-kuma/)
-4. [Uptime Kuma | Authelia](https://www.authelia.com/integration/openid-connect/clients/uptime-kuma/)
-5. [Integrate with Uptime Kuma | authentik](https://integrations.goauthentik.io/monitoring/uptime-kuma/)
+1. [uptime-kuma - GitHub](https://github.com/louislam/uptime-kuma)
+2. [Boost Website Reliability with Uptime Kuma - Calpa's Blog](https://calpa.me/blog/uptime-kuma-boost-website-reliability/)
+3. [Set Up Uptime Kuma to Monitor Service Availability - WebDong](https://www.webdong.dev/zh-tw/post/uptime-kuma/)
+4. [Uptime Kuma - Authelia](https://www.authelia.com/integration/openid-connect/clients/uptime-kuma/)
+5. [Integrate with Uptime Kuma - authentik](https://integrations.goauthentik.io/monitoring/uptime-kuma/)
