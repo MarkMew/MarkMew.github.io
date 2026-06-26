@@ -114,11 +114,39 @@ If you want only specific users or groups to access Uptime Kuma, find this appli
 
 ## Modify the ALB Listener
 
-After the App Registration is ready, return to the ALB listener and add OIDC authentication.
+After the App Registration is ready, return to ALB and add OIDC authentication.
 
-Here is a Terraform example:
+There are three common setup paths. Choose the one that matches how your environment is managed:
 
-```hcl
+- Manage the ALB listener with Terraform
+- Use Kubernetes Ingress with AWS Load Balancer Controller
+- Configure it manually in the AWS Console GUI
+
+> You do not need to configure all three.
+> If ALB is managed by Terraform, use the Terraform path. If ALB is created from Kubernetes Ingress, use Ingress annotations. If it is maintained manually, use the AWS Console path.
+{: .prompt-info}
+
+### Shared OIDC Information
+
+Whichever path you choose, you will need the following OIDC values. Replace `<tenant-id>` with your Entra ID tenant ID.
+
+| Field | Value |
+| --- | --- |
+| Issuer | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| Authorization endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| Token endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| User info endpoint | `https://graph.microsoft.com/oidc/userinfo` |
+| Client ID | Application (client) ID from the App Registration |
+| Client secret | Client secret value from the App Registration |
+| Scope | `openid email profile` |
+
+### Option 1: Terraform
+
+If the ALB listener is managed by Terraform, add two `default_action` blocks to `aws_lb_listener`.
+
+The first action handles `authenticate-oidc`, and the second action forwards authenticated traffic to the Uptime Kuma target group.
+
+```terraform
 resource "aws_lb_listener" "uptime_kuma_port443" {
   load_balancer_arn = aws_lb.uptime_kuma.arn
   port              = "443"
@@ -155,35 +183,122 @@ resource "aws_lb_listener" "uptime_kuma_port443" {
 }
 ```
 
-Replace the following values:
+Replace the following Terraform values:
 
-- `var.entra_tenant_id`: the Entra ID tenant ID
-- `var.entra_client_id`: the Application (client) ID from the App Registration
-- `var.entra_client_secret`: the client secret value created in the App Registration
-- `data.aws_acm_certificate.moxa.arn`: your ACM certificate ARN
-- `aws_lb_target_group.uptime_kuma.arn`: the target group ARN for Uptime Kuma
+| Variable | Description |
+| --- | --- |
+| `var.entra_tenant_id` | Entra ID tenant ID |
+| `var.entra_client_id` | Application (client) ID from the App Registration |
+| `var.entra_client_secret` | Client secret value from the App Registration |
+| `data.aws_acm_certificate.moxa.arn` | ACM certificate ARN |
+| `aws_lb_target_group.uptime_kuma.arn` | Target group ARN for Uptime Kuma |
 
-If you prefer configuring it in the AWS Console, fill in the OIDC fields as follows:
+### Option 2: Kubernetes Ingress YAML
 
-```plaintext
-Issuer:
-https://login.microsoftonline.com/<tenant-id>/v2.0
+If Uptime Kuma is deployed on Kubernetes and ALB is created by AWS Load Balancer Controller, you can configure OIDC authentication directly through Ingress annotations.
 
-Authorization endpoint:
-https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize
+Store the OIDC `clientID` and `clientSecret` in a Kubernetes Secret instead of writing them directly in the Ingress annotation.
 
-Token endpoint:
-https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token
-
-User info endpoint:
-https://graph.microsoft.com/oidc/userinfo
-
-Client ID:
-Application (client) ID from the App Registration
-
-Client secret:
-Client secret value from the App Registration
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: <NAMESPACE>
+  name: <OIDC_SECRET_NAME>
+type: Opaque
+stringData:
+  clientID: "<ENTRA_APPLICATION_CLIENT_ID>"
+  clientSecret: "<ENTRA_CLIENT_SECRET>"
 ```
+
+Then reference this Secret from `alb.ingress.kubernetes.io/auth-idp-oidc` in the Ingress.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: <NAMESPACE>
+  name: <INGRESS_NAME>
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/subnets: <SUBNET_ID_1>,<SUBNET_ID_2>
+    alb.ingress.kubernetes.io/healthcheck-path: "<HEALTHCHECK_PATH>"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443, "HTTP": 80}]'
+    alb.ingress.kubernetes.io/certificate-arn: <ACM_CERTIFICATE_ARN>
+    alb.ingress.kubernetes.io/auth-type: oidc
+    alb.ingress.kubernetes.io/auth-scope: openid email profile
+    alb.ingress.kubernetes.io/auth-session-cookie: <AUTH_SESSION_COOKIE_NAME>
+    alb.ingress.kubernetes.io/auth-session-timeout: "3600"
+    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate
+    alb.ingress.kubernetes.io/auth-idp-oidc: >
+      {
+        "issuer": "<OIDC_ISSUER>",
+        "authorizationEndpoint": "<OIDC_AUTHORIZATION_ENDPOINT>",
+        "tokenEndpoint": "<OIDC_TOKEN_ENDPOINT>",
+        "userInfoEndpoint": "<OIDC_USER_INFO_ENDPOINT>",
+        "secretName": "<OIDC_SECRET_NAME>"
+      }
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=120
+    alb.ingress.kubernetes.io/tags: Foo=Bar
+  labels:
+    app: <APP_LABEL>
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: <SERVICE_NAME>
+                port:
+                  number: <SERVICE_PORT>
+```
+
+Replace the following placeholders:
+
+| Placeholder | Description |
+| --- | --- |
+| `<NAMESPACE>` | Namespace where Uptime Kuma is deployed |
+| `<INGRESS_NAME>` | Ingress name |
+| `<SUBNET_ID_1>,<SUBNET_ID_2>` | Subnets used by ALB |
+| `<ACM_CERTIFICATE_ARN>` | ACM certificate ARN |
+| `<OIDC_SECRET_NAME>` | Kubernetes Secret name that stores the Entra ID client ID and client secret |
+| `<ENTRA_APPLICATION_CLIENT_ID>` | Application (client) ID from the App Registration |
+| `<ENTRA_CLIENT_SECRET>` | Client secret value from the App Registration |
+| `<OIDC_ISSUER>` | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| `<OIDC_AUTHORIZATION_ENDPOINT>` | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| `<OIDC_TOKEN_ENDPOINT>` | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| `<OIDC_USER_INFO_ENDPOINT>` | `https://graph.microsoft.com/oidc/userinfo` |
+| `<SERVICE_NAME>` | Uptime Kuma Service name |
+| `<SERVICE_PORT>` | Uptime Kuma Service port |
+
+### Option 3: AWS Console GUI
+
+If you prefer configuring it in the AWS Console, add an authentication action to the ALB listener rule.
+
+The recommended action order is:
+
+| Order | Action | Description |
+| --- | --- | --- |
+| 1 | `Authenticate` | Redirect users to Entra ID with OIDC |
+| 2 | `Forward` | Forward authenticated traffic to the Uptime Kuma target group |
+
+Fill in the OIDC fields as follows:
+
+| AWS Console field | Value |
+| --- | --- |
+| Issuer | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| Authorization endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| Token endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| User info endpoint | `https://graph.microsoft.com/oidc/userinfo` |
+| Client ID | Application (client) ID from the App Registration |
+| Client secret | Client secret value from the App Registration |
+| Scope | `openid email profile` |
+| Session cookie name | `uptime_kuma_auth` |
+| On unauthenticated request | `Authenticate` |
 
 After the configuration is complete, open the Uptime Kuma domain again. Under normal conditions, you should first be redirected to the Microsoft sign-in page. After signing in successfully, you will enter the Uptime Kuma interface.
 
@@ -191,9 +306,11 @@ After the configuration is complete, open the Uptime Kuma domain again. Under no
 
 Although Uptime Kuma does not provide native SSO, if it is deployed on AWS, ALB OIDC authentication can add that missing layer.
 
-The benefit of this approach is that you do not need to maintain an extra authentication service such as Authelia or authentik, while still reusing the users, groups, and sign-in policies already managed in Entra ID.
+Uptime Kuma is only one example. As Vibe Coding becomes more common, many internal systems are built quickly and may not have a complete account, permission, or tenant model at the beginning. In that situation, you can place the system behind ALB and use the ALB Authenticate action with Entra ID or Amazon Cognito, so users are authenticated before they enter the application.
 
-One important point: after disabling Uptime Kuma's built-in authentication, ALB becomes the real security boundary. Make sure the backend Uptime Kuma service can only be accessed by ALB, so users cannot bypass ALB and reach the system directly.
+If the system later needs tenant creation, an admin backend, or more fine-grained authorization, you can still let ALB handle entry-point authentication first while the application focuses on its own business logic. The benefit of this approach is that you do not need to maintain an extra authentication service such as Authelia or authentik, while still reusing users, groups, and sign-in policies already managed in Entra ID or Cognito.
+
+One important point: after disabling Uptime Kuma's built-in authentication, or after putting an application without built-in authentication behind ALB, ALB becomes the real security boundary. Make sure the backend service can only be accessed by ALB, so users cannot bypass ALB and reach the system directly.
 
 ## References
 

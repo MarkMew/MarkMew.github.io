@@ -113,11 +113,39 @@ flowchart LR
 
 ## 修改 ALB Listener
 
-App Registration 建好後，就可以回到 ALB listener 加上 OIDC authentication。
+App Registration 建好後，就可以回到 ALB 加上 OIDC authentication。
 
-以下是一個 Terraform 範例：
+這裡依照部署方式分成三種設定路徑，選一種符合你環境的方式即可：
 
-```hcl
+- 使用 Terraform 管理 ALB listener
+- 使用 Kubernetes Ingress 與 AWS Load Balancer Controller
+- 直接在 AWS Console GUI 中設定
+
+> 下面三種方式不需要全部設定。
+> 如果 ALB 是 Terraform 管理，就使用 Terraform；如果 ALB 是 Kubernetes Ingress 建出來的，就使用 Ingress annotations；如果是手動維護，就使用 AWS Console。
+{: .prompt-info}
+
+### 共用 OIDC 資訊
+
+不論使用哪一種方式，都會用到以下 OIDC 資訊。`<tenant-id>` 要替換成你的 Entra ID tenant ID。
+
+| 欄位 | 值 |
+| --- | --- |
+| Issuer | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| Authorization endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| Token endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| User info endpoint | `https://graph.microsoft.com/oidc/userinfo` |
+| Client ID | App Registration 的 Application（client）ID |
+| Client secret | App Registration 建立的 client secret value |
+| Scope | `openid email profile` |
+
+### 方法一：Terraform
+
+如果 ALB listener 是用 Terraform 管理，可以在 `aws_lb_listener` 中加入兩個 `default_action`。
+
+第一個 action 負責 `authenticate-oidc`，第二個 action 才把流量 forward 到 Uptime Kuma 的 target group。
+
+```terraform
 resource "aws_lb_listener" "uptime_kuma_port443" {
   load_balancer_arn = aws_lb.uptime_kuma.arn
   port              = "443"
@@ -154,35 +182,126 @@ resource "aws_lb_listener" "uptime_kuma_port443" {
 }
 ```
 
-其中需要替換的變數如下：
+Terraform 範例中需要替換的變數如下：
 
-- `var.entra_tenant_id`：Entra ID tenant ID
-- `var.entra_client_id`：App Registration 的 Application（client）ID
-- `var.entra_client_secret`：App Registration 建立的 client secret value
-- `data.aws_acm_certificate.moxa.arn`：你的 ACM 憑證 ARN
-- `aws_lb_target_group.uptime_kuma.arn`：Uptime Kuma 所在的 target group ARN
+| 變數 | 說明 |
+| --- | --- |
+| `var.entra_tenant_id` | Entra ID tenant ID |
+| `var.entra_client_id` | App Registration 的 Application（client）ID |
+| `var.entra_client_secret` | App Registration 建立的 client secret value |
+| `data.aws_acm_certificate.moxa.arn` | ACM 憑證 ARN |
+| `aws_lb_target_group.uptime_kuma.arn` | Uptime Kuma 所在的 target group ARN |
 
-如果你習慣在 AWS Console 裡設定，OIDC 欄位可以依照下面填：
+### 方法二：Kubernetes Ingress YAML
 
-```plaintext
-Issuer:
-https://login.microsoftonline.com/<tenant-id>/v2.0
+如果 Uptime Kuma 是部署在 Kubernetes 裡，且 ALB 是透過 AWS Load Balancer Controller 建立，可以直接在 Ingress annotations 中設定 OIDC authentication。
 
-Authorization endpoint:
-https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize
+OIDC 的 `clientID` 與 `clientSecret` 建議放在 Kubernetes Secret 中，避免直接寫在 Ingress annotation 裡。
 
-Token endpoint:
-https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token
-
-User info endpoint:
-https://graph.microsoft.com/oidc/userinfo
-
-Client ID:
-App Registration 的 Application（client）ID
-
-Client secret:
-App Registration 的 client secret value
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: <NAMESPACE>
+  name: <OIDC_SECRET_NAME>
+type: Opaque
+stringData:
+  clientID: "<ENTRA_APPLICATION_CLIENT_ID>"
+  clientSecret: "<ENTRA_CLIENT_SECRET>"
 ```
+
+接著在 Ingress 中透過 `alb.ingress.kubernetes.io/auth-idp-oidc` 指向這個 Secret。
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: <NAMESPACE>
+  name: <INGRESS_NAME>
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/subnets: <SUBNET_ID_1>,<SUBNET_ID_2>
+    alb.ingress.kubernetes.io/healthcheck-path: "<HEALTHCHECK_PATH>"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443, "HTTP": 80}]'
+    alb.ingress.kubernetes.io/certificate-arn: <ACM_CERTIFICATE_ARN>
+    alb.ingress.kubernetes.io/auth-type: oidc
+    alb.ingress.kubernetes.io/auth-scope: openid email profile
+    alb.ingress.kubernetes.io/auth-session-cookie: <AUTH_SESSION_COOKIE_NAME>
+    alb.ingress.kubernetes.io/auth-session-timeout: "3600"
+    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate
+    alb.ingress.kubernetes.io/auth-idp-oidc: >
+      {
+        "issuer": "<OIDC_ISSUER>",
+        "authorizationEndpoint": "<OIDC_AUTHORIZATION_ENDPOINT>",
+        "tokenEndpoint": "<OIDC_TOKEN_ENDPOINT>",
+        "userInfoEndpoint": "<OIDC_USER_INFO_ENDPOINT>",
+        "secretName": "<OIDC_SECRET_NAME>"
+      }
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=120
+    alb.ingress.kubernetes.io/tags: Foo=Bar
+  labels:
+    app: <APP_LABEL>
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: <SERVICE_NAME>
+                port:
+                  number: <SERVICE_PORT>
+```
+
+這段 YAML 中需要替換的值如下：
+
+| 佔位符 | 說明 |
+| --- | --- |
+| `<NAMESPACE>` | Uptime Kuma 所在的 namespace |
+| `<INGRESS_NAME>` | Ingress 名稱 |
+| `<SUBNET_ID_1>,<SUBNET_ID_2>` | ALB 要使用的 subnet |
+| `<ACM_CERTIFICATE_ARN>` | ACM 憑證 ARN |
+| `<OIDC_SECRET_NAME>` | 存放 Entra ID client ID 與 client secret 的 Kubernetes Secret 名稱 |
+| `<ENTRA_APPLICATION_CLIENT_ID>` | App Registration 的 Application（client）ID |
+| `<ENTRA_CLIENT_SECRET>` | App Registration 建立的 client secret value |
+| `<OIDC_ISSUER>` | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| `<OIDC_AUTHORIZATION_ENDPOINT>` | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| `<OIDC_TOKEN_ENDPOINT>` | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| `<OIDC_USER_INFO_ENDPOINT>` | `https://graph.microsoft.com/oidc/userinfo` |
+| `<SERVICE_NAME>` | Uptime Kuma Service 名稱 |
+| `<SERVICE_PORT>` | Uptime Kuma Service port |
+
+> tags 的地方可自由決定移除或是添加，
+> 添加後比較多的用途只有在統計每個系統的成本時才會用到。
+{: .prompt-info}
+
+### 方法三：AWS Console GUI
+
+如果你習慣在 AWS Console 裡設定，可以到 ALB listener 的 rule 中新增 authentication action。
+
+Action 順序建議如下：
+
+| Order | Action | 說明 |
+| --- | --- | --- |
+| 1 | `Authenticate` | 使用 OIDC 導向 Entra ID 登入 |
+| 2 | `Forward` | 驗證通過後 forward 到 Uptime Kuma target group |
+
+GUI 中的 OIDC 欄位可以依照下面填：
+
+| AWS Console 欄位 | 填入內容 |
+| --- | --- |
+| Issuer | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| Authorization endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| Token endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| User info endpoint | `https://graph.microsoft.com/oidc/userinfo` |
+| Client ID | App Registration 的 Application（client）ID |
+| Client secret | App Registration 建立的 client secret value |
+| Scope | `openid email profile` |
+| Session cookie name | `uptime_kuma_auth` |
+| On unauthenticated request | `Authenticate` |
 
 設定完成後，重新開啟 Uptime Kuma 網域，正常情況下會先被導向 Microsoft 登入頁。登入成功後，才會進入 Uptime Kuma 介面。
 
@@ -190,9 +309,11 @@ App Registration 的 client secret value
 
 Uptime Kuma 本身雖然沒有原生 SSO，但如果它部署在 AWS 上，就可以利用 ALB 的 OIDC authentication 補上這一層能力。
 
-這種做法的好處是不用額外維護 Authelia、authentik 之類的認證服務，也能直接沿用 Entra ID 既有的使用者、群組與登入政策。
+Uptime Kuma 只是其中一種範例。現在 Vibe Coding 越來越常見，很多快速做出來的內部系統，一開始不一定會有完整的帳號、權限或租戶機制。這種情況下，也可以先把系統放在 ALB 後面，透過 ALB 的 Authenticate action 串接 Entra ID 或 Amazon Cognito，讓使用者先通過身份驗證後再進入系統。
 
-不過要特別注意，停用 Uptime Kuma 內建驗證後，真正的保護邊界就會變成 ALB。因此後端 Uptime Kuma 服務務必只能被 ALB 存取，避免繞過 ALB 後直接進入系統。
+如果系統本身後續要做 tenant 建立、後台管理或更細緻的授權，也可以先把「入口認證」交給 ALB，讓應用程式專注處理自己的業務邏輯。這種做法的好處是不用額外維護 Authelia、authentik 之類的認證服務，也能直接沿用 Entra ID 或 Cognito 既有的使用者、群組與登入政策。
+
+不過要特別注意，停用 Uptime Kuma 內建驗證，或把一個沒有內建認證的系統放到 ALB 後面時，真正的保護邊界就會變成 ALB。因此後端服務務必只能被 ALB 存取，避免使用者繞過 ALB 後直接進入系統。
 
 ## 參考資料
 

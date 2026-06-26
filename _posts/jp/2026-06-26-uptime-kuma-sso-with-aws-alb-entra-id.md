@@ -114,11 +114,39 @@ Azure portal で `App registrations`（アプリの登録）に移動し、`New 
 
 ## ALB Listener を変更する
 
-アプリの登録ができたら、ALB listener に戻って OIDC 認証を追加します。
+アプリの登録ができたら、ALB に戻って OIDC 認証を追加します。
 
-以下は Terraform の例です。
+ここでは、デプロイ方法に合わせて 3 つの設定方法に分けます。自分の環境に合うものを 1 つ選べば十分です。
 
-```hcl
+- Terraform で ALB listener を管理する
+- Kubernetes Ingress と AWS Load Balancer Controller を使う
+- AWS Console GUI で直接設定する
+
+> 3 つすべてを設定する必要はありません。
+> ALB を Terraform で管理している場合は Terraform、Kubernetes Ingress から ALB を作成している場合は Ingress annotations、手動で管理している場合は AWS Console を使います。
+{: .prompt-info}
+
+### 共通の OIDC 情報
+
+どの方法でも、以下の OIDC 情報を使います。`<tenant-id>` は Entra ID tenant ID に置き換えてください。
+
+| 欄 | 値 |
+| --- | --- |
+| Issuer | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| Authorization endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| Token endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| User info endpoint | `https://graph.microsoft.com/oidc/userinfo` |
+| Client ID | アプリの登録の Application (client) ID |
+| Client secret | アプリの登録で作成した client secret value |
+| Scope | `openid email profile` |
+
+### 方法 1：Terraform
+
+ALB listener を Terraform で管理している場合は、`aws_lb_listener` に 2 つの `default_action` を追加します。
+
+1 つ目の action で `authenticate-oidc` を行い、2 つ目の action で認証済みの通信を Uptime Kuma の target group に forward します。
+
+```terraform
 resource "aws_lb_listener" "uptime_kuma_port443" {
   load_balancer_arn = aws_lb.uptime_kuma.arn
   port              = "443"
@@ -155,35 +183,122 @@ resource "aws_lb_listener" "uptime_kuma_port443" {
 }
 ```
 
-置き換える必要がある値は次のとおりです。
+Terraform の例で置き換える値は次のとおりです。
 
-- `var.entra_tenant_id`：Entra ID tenant ID
-- `var.entra_client_id`：アプリの登録の Application (client) ID（アプリケーション (クライアント) ID）
-- `var.entra_client_secret`：アプリの登録で作成した client secret value
-- `data.aws_acm_certificate.moxa.arn`：ACM 証明書の ARN
-- `aws_lb_target_group.uptime_kuma.arn`：Uptime Kuma の target group ARN
+| 変数 | 説明 |
+| --- | --- |
+| `var.entra_tenant_id` | Entra ID tenant ID |
+| `var.entra_client_id` | アプリの登録の Application (client) ID（アプリケーション (クライアント) ID） |
+| `var.entra_client_secret` | アプリの登録で作成した client secret value |
+| `data.aws_acm_certificate.moxa.arn` | ACM 証明書の ARN |
+| `aws_lb_target_group.uptime_kuma.arn` | Uptime Kuma の target group ARN |
 
-AWS Console で設定する場合は、OIDC の各欄に次の値を入力します。
+### 方法 2：Kubernetes Ingress YAML
 
-```plaintext
-Issuer:
-https://login.microsoftonline.com/<tenant-id>/v2.0
+Uptime Kuma を Kubernetes にデプロイしていて、ALB を AWS Load Balancer Controller で作成している場合は、Ingress annotations で OIDC 認証を設定できます。
 
-Authorization endpoint:
-https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize
+OIDC の `clientID` と `clientSecret` は、Ingress annotation に直接書かず Kubernetes Secret に置くことをおすすめします。
 
-Token endpoint:
-https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token
-
-User info endpoint:
-https://graph.microsoft.com/oidc/userinfo
-
-Client ID:
-アプリの登録の Application (client) ID
-
-Client secret:
-アプリの登録で作成した client secret value
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: <NAMESPACE>
+  name: <OIDC_SECRET_NAME>
+type: Opaque
+stringData:
+  clientID: "<ENTRA_APPLICATION_CLIENT_ID>"
+  clientSecret: "<ENTRA_CLIENT_SECRET>"
 ```
+
+次に、Ingress の `alb.ingress.kubernetes.io/auth-idp-oidc` からこの Secret を参照します。
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: <NAMESPACE>
+  name: <INGRESS_NAME>
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/subnets: <SUBNET_ID_1>,<SUBNET_ID_2>
+    alb.ingress.kubernetes.io/healthcheck-path: "<HEALTHCHECK_PATH>"
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443, "HTTP": 80}]'
+    alb.ingress.kubernetes.io/certificate-arn: <ACM_CERTIFICATE_ARN>
+    alb.ingress.kubernetes.io/auth-type: oidc
+    alb.ingress.kubernetes.io/auth-scope: openid email profile
+    alb.ingress.kubernetes.io/auth-session-cookie: <AUTH_SESSION_COOKIE_NAME>
+    alb.ingress.kubernetes.io/auth-session-timeout: "3600"
+    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate
+    alb.ingress.kubernetes.io/auth-idp-oidc: >
+      {
+        "issuer": "<OIDC_ISSUER>",
+        "authorizationEndpoint": "<OIDC_AUTHORIZATION_ENDPOINT>",
+        "tokenEndpoint": "<OIDC_TOKEN_ENDPOINT>",
+        "userInfoEndpoint": "<OIDC_USER_INFO_ENDPOINT>",
+        "secretName": "<OIDC_SECRET_NAME>"
+      }
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=120
+    alb.ingress.kubernetes.io/tags: Foo=Bar
+  labels:
+    app: <APP_LABEL>
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: <SERVICE_NAME>
+                port:
+                  number: <SERVICE_PORT>
+```
+
+この YAML で置き換える値は次のとおりです。
+
+| プレースホルダー | 説明 |
+| --- | --- |
+| `<NAMESPACE>` | Uptime Kuma がある namespace |
+| `<INGRESS_NAME>` | Ingress 名 |
+| `<SUBNET_ID_1>,<SUBNET_ID_2>` | ALB が使用する subnet |
+| `<ACM_CERTIFICATE_ARN>` | ACM 証明書の ARN |
+| `<OIDC_SECRET_NAME>` | Entra ID client ID と client secret を保存する Kubernetes Secret 名 |
+| `<ENTRA_APPLICATION_CLIENT_ID>` | アプリの登録の Application (client) ID |
+| `<ENTRA_CLIENT_SECRET>` | アプリの登録で作成した client secret value |
+| `<OIDC_ISSUER>` | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| `<OIDC_AUTHORIZATION_ENDPOINT>` | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| `<OIDC_TOKEN_ENDPOINT>` | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| `<OIDC_USER_INFO_ENDPOINT>` | `https://graph.microsoft.com/oidc/userinfo` |
+| `<SERVICE_NAME>` | Uptime Kuma Service 名 |
+| `<SERVICE_PORT>` | Uptime Kuma Service port |
+
+### 方法 3：AWS Console GUI
+
+AWS Console で設定する場合は、ALB listener rule に authentication action を追加します。
+
+Action の順序は次のようにします。
+
+| Order | Action | 説明 |
+| --- | --- | --- |
+| 1 | `Authenticate` | OIDC で Entra ID にリダイレクトする |
+| 2 | `Forward` | 認証済みの通信を Uptime Kuma target group に forward する |
+
+GUI の OIDC 欄には次の値を入力します。
+
+| AWS Console 欄 | 入力する値 |
+| --- | --- |
+| Issuer | `https://login.microsoftonline.com/<tenant-id>/v2.0` |
+| Authorization endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/authorize` |
+| Token endpoint | `https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token` |
+| User info endpoint | `https://graph.microsoft.com/oidc/userinfo` |
+| Client ID | アプリの登録の Application (client) ID |
+| Client secret | アプリの登録で作成した client secret value |
+| Scope | `openid email profile` |
+| Session cookie name | `uptime_kuma_auth` |
+| On unauthenticated request | `Authenticate` |
 
 設定が完了したら、もう一度 Uptime Kuma のドメインを開きます。正常であれば、まず Microsoft のサインイン画面にリダイレクトされます。サインインに成功すると、Uptime Kuma の画面に入れるようになります。
 
@@ -191,9 +306,11 @@ Client secret:
 
 Uptime Kuma 自体にはネイティブの SSO 機能がありませんが、AWS 上にデプロイしている場合は、ALB の OIDC 認証でその不足分を補えます。
 
-この方法のメリットは、Authelia や authentik のような認証サービスを別途運用せずに、Entra ID で管理しているユーザー、グループ、サインインポリシーをそのまま使えることです。
+Uptime Kuma はあくまで一例です。Vibe Coding が一般的になるにつれて、短時間で作られた内部システムが、最初から完全なアカウント、権限、tenant の仕組みを持っていないことも増えてきます。そのような場合でも、システムを ALB の背後に置き、ALB の Authenticate action で Entra ID や Amazon Cognito と連携すれば、ユーザーがアプリケーションに入る前に認証を通せます。
 
-ただし、Uptime Kuma の組み込み認証を無効化した後は、実質的な保護境界が ALB になります。ALB を迂回して直接アクセスされないように、バックエンドの Uptime Kuma サービスは必ず ALB からのみ到達できるようにしてください。
+後から tenant 作成、管理画面、より細かい認可を実装する場合でも、入口の認証はいったん ALB に任せ、アプリケーション側は自分の業務ロジックに集中できます。この方法のメリットは、Authelia や authentik のような認証サービスを別途運用せずに、Entra ID や Cognito で管理しているユーザー、グループ、サインインポリシーをそのまま使えることです。
+
+ただし、Uptime Kuma の組み込み認証を無効化した場合や、組み込み認証を持たないシステムを ALB の背後に置く場合は、実質的な保護境界が ALB になります。ALB を迂回して直接アクセスされないように、バックエンドサービスは必ず ALB からのみ到達できるようにしてください。
 
 ## 参考資料
 
