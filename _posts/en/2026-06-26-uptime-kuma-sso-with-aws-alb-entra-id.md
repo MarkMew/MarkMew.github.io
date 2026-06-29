@@ -35,7 +35,7 @@ In other words, Uptime Kuma itself does not need to understand OIDC or implement
 
 ## Architecture
 
-The overall architecture looks like this:
+At a high level, the architecture can be simplified as follows:
 
 ```mermaid
 flowchart LR
@@ -45,6 +45,9 @@ flowchart LR
   B --> D[Uptime Kuma]
 ```
 
+A more complete view of the authentication and redirect flow is shown below:
+
+![AWS ALB authentication flow with Microsoft Entra ID](/assets/img/aws_alb_authenticate_with_entra_id_en.png)
 The flow can be broken down into the following steps:
 
 1. The user opens the Uptime Kuma domain.
