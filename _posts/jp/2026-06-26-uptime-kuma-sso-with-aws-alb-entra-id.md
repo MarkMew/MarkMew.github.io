@@ -3,7 +3,7 @@ layout: post
 title: "AWS ALB と Entra ID で Uptime Kuma に SSO を追加する"
 description: "Uptime Kuma にはネイティブの SSO 機能がありません。この記事では、AWS Application Load Balancer の OIDC 認証と Microsoft Entra ID を使い、監視画面への入口を Entra ID で一元管理する方法を紹介します。"
 author: Mark_Mew
-categories: [Observability]
+categories: [AWS, ALB]
 tags: [DevOps, Observability, monitor, ALB]
 keywords: [DevOps, Observability, monitor, uptime-kuma, AWS, AWS ALB, Entra ID, OIDC, SSO]
 lang: ja
