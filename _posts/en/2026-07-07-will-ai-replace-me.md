@@ -116,6 +116,16 @@ After receiving a prompt, AI infers the user's intent from the text and context 
 
 Adopting AI therefore involves more than turning something we would say to a person into a prompt. Hidden requirements must be converted into explicit conditions, examples, and acceptance criteria. Otherwise, AI does not eliminate the cost of communication; it merely postpones the misunderstanding until after the output has been produced.
 
+### Is This the Future We Want?
+
+When it comes to handing judgment over to a system, I recommend the Japanese anime *PSYCHO-PASS*. In its world, the Sibyl System measures and quantifies people's mental states, personality traits, and risk of criminal behavior. Its assessments also influence career aptitude and the course of people's lives.
+
+On the surface, the system reduces crime and the uncertainty of making choices, allowing society to remain highly stable. People no longer need to keep wondering which career suits them or which path they should take, because the system has already analyzed the data and supplied an answer. But when the system decides what counts as “normal,” who is considered dangerous, and what kind of life a person is suited for, do people still have a genuine choice?
+
+Today's AI is nowhere near the Sibyl System, of course, but both raise a similar question. When recommendations shift from helping us choose to making decisions about our work, way of life, and values on our behalf, we may gain a more efficient world with fewer mistakes. At the same time, we may lose the freedom to depart from the standard, explore the unknown, and accept the consequences of our own choices.
+
+The question, then, is not only how much AI can do for us. It is which decisions we are willing to hand over to a system, and which decisions should remain ours even when human judgment is less efficient. If a future without conflict can exist only at the cost of choice and passion, is that really the future we want?
+
 ## How Should We Approach AI?
 
 My answer is: **accept it, embrace it, but do not follow it blindly.**
@@ -136,3 +146,4 @@ The results below come from media coverage and case studies published by service
 - [Reactivating Lapsed and Lost Customers for a Premium Coffee Chain](https://www.transorg.ai/case-study/reactivating-lapsed-and-lost-customers-for-a-premium-coffee-chain/)
 - [A Visit Challenge Accelerates Visits by 54% and Increases Revenue](https://www.paytronix.com/resources/case-studies/noodle-visit-challenge)
 - [Sunshine Creation 2026 Summer — Official Event Information](https://www.creation.gr.jp/sc2026sum/)
+- [PSYCHO-PASS — Official Series Website](https://psycho-pass.com/)
