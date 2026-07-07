@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Amazon S3へファイルをアップロードする5つの方法：Console、CLI、API、SFTP、署名付きURL"
+image: https://fastly.picsum.photos/id/1051/1200/630.jpg?hmac=0-hLWE8LP6zTWPjN1tDobiunaNnZTQlPKIimN3WbBVM
 description: "AWS Management Console、AWS CLI、API Gateway、AWS Transfer Family、署名付きURLを使ってAmazon S3へファイルをアップロードする方法を、用途、制約、セキュリティ、実装例とともに比較します。"
 author: Mark_Mew
 categories: [AWS, S3]

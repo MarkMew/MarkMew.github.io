@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "5 Ways to Upload Files to Amazon S3: Console, CLI, API, SFTP, and Presigned URLs"
+image: https://fastly.picsum.photos/id/1051/1200/630.jpg?hmac=0-hLWE8LP6zTWPjN1tDobiunaNnZTQlPKIimN3WbBVM
 description: "Compare five ways to upload files to Amazon S3 using the AWS Management Console, AWS CLI, API Gateway, AWS Transfer Family, and presigned URLs, including use cases, limitations, security considerations, and examples."
 author: Mark_Mew
 categories: [AWS, S3]

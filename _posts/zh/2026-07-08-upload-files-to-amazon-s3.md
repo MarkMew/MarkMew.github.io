@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "將檔案上傳到 S3 的 5 種方法：Console、CLI、API、SFTP 與 Presigned URL"
+image: https://fastly.picsum.photos/id/1051/1200/630.jpg?hmac=0-hLWE8LP6zTWPjN1tDobiunaNnZTQlPKIimN3WbBVM
 description: "比較使用 AWS Management Console、AWS CLI、API Gateway、AWS Transfer Family 與 Presigned URL 上傳檔案到 Amazon S3 的方式、適用情境、安全限制與實作範例。"
 author: Mark_Mew
 categories: [AWS, S3]
