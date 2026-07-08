@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "AI 會取代我嗎？"
+image: https://fastly.picsum.photos/id/742/1200/630.jpg?hmac=SlZKfB8efDhYJgryERXmiiSdkuoyhlBwg-t2tRUwD8w
 description: "AI 會取代哪些工作？從標準化任務、工程師與藝術家的處境，到企業導入 AI 的必要性與風險，整理我對這一波 AI 浪潮的觀察。"
 author: Mark_Mew
 category: 雜談

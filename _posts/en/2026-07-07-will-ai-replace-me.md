@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "Will AI Replace Me?"
+image: https://fastly.picsum.photos/id/742/1200/630.jpg?hmac=SlZKfB8efDhYJgryERXmiiSdkuoyhlBwg-t2tRUwD8w
 description: "Which kinds of work will AI replace? From standardized tasks and the impact on engineers and creative professionals to whether companies really need AI and the risks of adopting it, this article presents my view of the current AI wave."
 author: Mark_Mew
 category: Opinion

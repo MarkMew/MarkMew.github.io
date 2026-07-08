@@ -1,6 +1,7 @@
 ---
 layout: post
 title: "AIは私の仕事を奪うのか？"
+image: https://fastly.picsum.photos/id/742/1200/630.jpg?hmac=SlZKfB8efDhYJgryERXmiiSdkuoyhlBwg-t2tRUwD8w
 description: "AIはどのような仕事を代替するのか。標準化されたタスク、エンジニアやクリエイターへの影響、企業がAIを導入する必要性とリスクから、現在のAIの波について考えます。"
 author: Mark_Mew
 category: 雑談
