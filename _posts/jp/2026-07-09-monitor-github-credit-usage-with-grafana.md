@@ -146,6 +146,12 @@ Panelの基本設定は次のとおりです。
 5. 新しいCopilot metrics JSONを、そのpanelのInfinity inline dataに書き込む。
 6. Grafana APIを呼び出し、Dashboardを保存する。
 
+> GitHub APIから返される結果のデータ形式は`ndjson`で、`JSON Lines`とも呼ばれます。
+> この形式はGrafanaで直接扱いにくいため、cronjobで先に変換しています。
+> 結果をデータベースに保存するかどうかは、長期保存したいかどうか次第です。
+> 長期保存する前提であれば、これらのpluginを入れずに、データを保存してSQLで処理するだけでも十分です。
+{: .prompt-info }
+
 実際に使う場合は、`GITHUB_TOKEN`や`GRAFANA_TOKEN`のような機密情報をSecretや環境変数に保存してください。script内に直接書き込むのは避けます。
 
 ```bash

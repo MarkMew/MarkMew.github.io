@@ -146,6 +146,12 @@ Finally, use a scheduled job to update the Dashboard regularly. This script does
 5. Writes the new Copilot metrics JSON into the Infinity inline data of that panel.
 6. Calls the Grafana API to save the Dashboard.
 
+> The result returned by the GitHub API is in `ndjson`, also known as `JSON Lines`.
+> Because this format is not convenient to process directly in Grafana, the cronjob is used to transform it first.
+> Whether the result should be stored in a database depends on whether you want to keep the data long term.
+> If long-term retention is required, you do not need to install these plugins; storing the data and querying it with SQL is enough.
+{: .prompt-info }
+
 In real usage, store sensitive values such as `GITHUB_TOKEN` and `GRAFANA_TOKEN` in Secrets or environment variables. Do not hard-code them directly in the script.
 
 ```bash

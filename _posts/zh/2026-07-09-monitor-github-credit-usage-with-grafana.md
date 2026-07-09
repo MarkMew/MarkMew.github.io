@@ -145,6 +145,12 @@ Panel 的基本設定如下：
 5. 將新的 Copilot metrics JSON 寫入該 panel 的 Infinity inline data。
 6. 呼叫 Grafana API 儲存 Dashboard。
 
+> 呼叫 GitHub API 取得結果的資料型態為 `ndjson` 也稱 `JSON Lines`，
+> 因為不好直接用 Grafana 處理，所以才用 cronjob 處理，
+> 至於結果是不要要存進資料庫，就看大家是否想要長期保存，
+> 有打算長期保存，其實就不需要安裝這些套件，直接下 SQL 處理就可以了。
+{: .prompt-info }
+
 實際使用時，建議把 `GITHUB_TOKEN`、`GRAFANA_TOKEN` 這類敏感資訊放在 Secret 或環境變數中，不要直接寫死在 script 裡。
 
 ```bash
