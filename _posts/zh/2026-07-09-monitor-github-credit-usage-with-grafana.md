@@ -7,7 +7,7 @@ author: Mark_Mew
 categories: [GitHub]
 tags: [GitHub, GitHub Copilot]
 keywords: [GitHub, GitHub Copilot, Grafana, GitHub API]
-date: 2026-07-10
+date: 2026-07-09
 ---
 
 GitHub Copilot 自從 6/1 大改版以後，開始以用量計價，因此監控使用者的 Credit 用量也變得更重要。

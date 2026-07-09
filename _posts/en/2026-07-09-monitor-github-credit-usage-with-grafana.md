@@ -8,7 +8,7 @@ categories: [GitHub]
 tags: [GitHub, GitHub Copilot]
 keywords: [GitHub, GitHub Copilot, Grafana, GitHub API]
 lang: en
-date: 2026-07-10
+date: 2026-07-09
 ---
 
 Since the GitHub Copilot update on June 1, usage-based billing has made it more important to monitor each user's Credit usage.

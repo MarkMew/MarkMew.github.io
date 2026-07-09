@@ -8,7 +8,7 @@ categories: [GitHub]
 tags: [GitHub, GitHub Copilot]
 keywords: [GitHub, GitHub Copilot, Grafana, GitHub API]
 lang: ja
-date: 2026-07-10
+date: 2026-07-09
 ---
 
 GitHub Copilotは6月1日の大きな変更以降、使用量ベースの課金になりました。そのため、各ユーザーのCredit使用量を監視する重要性も高くなっています。
