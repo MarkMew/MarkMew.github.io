@@ -50,7 +50,7 @@ ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 > 請務必妥善保管，GitHub 只會在建立當下顯示一次。
-{: .prompt-warn }
+{: .prompt-warning}
 
 取得 Token 後，可以先用下面的 API 確認權限是否正常。請將 `YOUR_TOKEN` 與 `{Organization}` 替換成自己的設定。
 
@@ -278,7 +278,7 @@ echo "Dashboard updated successfully."
 > 不過 GitHub Copilot 每個月第一天 Credits 用量會歸零，
 > 如果要做到使用者累積用量圖，則在 cronjob 上會有比較多客製，
 > 有興趣的話，我之後再寫一篇
-{: .prompt-warn }
+{: .prompt-warning}
 
 ## 小結
 

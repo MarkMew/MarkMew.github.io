@@ -51,7 +51,7 @@ ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 > Tokenは安全に保管してください。GitHubでは作成時に一度だけ表示されます。
-{: .prompt-warn }
+{: .prompt-warning}
 
 Tokenを取得したら、次のAPIで権限が正しく動作するか確認できます。`YOUR_TOKEN`と`{Organization}`は自分の値に置き換えてください。
 
@@ -278,7 +278,7 @@ CronJobが正常に実行されると、最初に`[]`として設定していた
 > GitHub Copilot Creditの使用量は毎月1日にリセットされるため、
 > ユーザー別の累積使用量グラフを作る場合は、cronjob側で追加のカスタマイズが必要になります。
 > そのあたりは、また別の記事で扱うかもしれません。
-{: .prompt-warn }
+{: .prompt-warning}
 
 ## まとめ
 

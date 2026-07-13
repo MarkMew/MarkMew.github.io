@@ -51,7 +51,7 @@ ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 > Store it securely. GitHub only shows the Token once when it is created.
-{: .prompt-warn }
+{: .prompt-warning}
 
 After getting the Token, you can use the following API to verify that the permissions work. Replace `YOUR_TOKEN` and `{Organization}` with your own values.
 
@@ -277,7 +277,7 @@ After the cronjob runs successfully, the inline data that was originally set to 
 > GitHub Copilot Credit usage resets on the first day of each month,
 > so building a true per-user cumulative usage chart requires more custom logic in the cronjob.
 > I may cover that in a separate article.
-{: .prompt-warn }
+{: .prompt-warning}
 
 ## Summary
 
