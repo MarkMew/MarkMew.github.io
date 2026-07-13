@@ -111,10 +111,38 @@ The basic Panel settings are:
 - Format: `JSON`
 - Initial data: `[]` is enough to start with
 
+![Grafana Infinity Query](/assets/img/grafana_infinity_query.png)
+
 > The `Panel title` must match the `PANEL_TITLE` used later in the cronjob, because the script uses this title to find the panel that should be updated.
 {: .prompt-info }
 
-After configuring the data source, switch to `Transformations` and add the first transformation: `Group by`.
+After configuring the data source, expand `Parsing options & Result fields` in the Infinity query. Here, define the fields that will be used later so Grafana knows which JSON keys to read and how each field should be typed.
+
+At this point, the panel's inline data may still be just `[]`. The real data will only be written after the cronjob runs, so Grafana may not be able to infer the actual structure while you are creating the panel. If the field types are not defined up front, `ai_credits_used` may be treated as a string, which can break `Group by`, `SUM`, or `Sort by` later.
+
+The field names here correspond to the JSON keys that the cronjob will write into the inline data. Although the initial data is still `[]`, the metrics JSON downloaded and merged later in this article will contain fields similar to this:
+
+```json
+[
+  {
+    "day": "2026-07-09",
+    "user_login": "octocat",
+    "ai_credits_used": 120
+  }
+]
+```
+
+For this example, define at least these three fields:
+
+- `day`: the date of the record. Set it to `Time` or the date/time type available in your Grafana/Infinity version. This field is useful later if you want to build a daily trend or time-series panel.
+- `user_login`: the GitHub username. Set it to `String`; it will be used for grouping.
+- `ai_credits_used`: the Copilot Credit usage. Set it to `Number`; it will be used for summing and sorting.
+
+If you want to show more information in the table later, such as organization, model, or other metrics, you can add those fields here as well. For this article's usage ranking, `day`, `user_login`, and `ai_credits_used` are enough.
+
+![Grafana Infinity Query parsing option](/assets/img/grafana_infinity_parsing_option.png)
+
+Then switch to `Transformations` and add the first transformation: `Group by`.
 
 The `Group by` settings are:
 
@@ -122,7 +150,7 @@ The `Group by` settings are:
 - Aggregation field: `ai_credits_used`
 - Aggregation: `SUM`
 
-This setting sums `ai_credits_used` for the same user across different rows, so the Dashboard can show each user's Copilot Credit usage over the last 28 days.
+This setting sums `ai_credits_used` for the same user across rows from different dates, so the Dashboard can show each user's Copilot Credit usage over the last 28 days. In other words, `day` remains in the raw data as the time dimension, while this ranking panel aggregates by user before displaying the result.
 
 Then add a second transformation: `Sort by`.
 
@@ -133,7 +161,16 @@ The `Sort by` settings are:
 
 This puts the users with the highest Credit usage at the top, creating a simple usage ranking.
 
-If you want the table to look cleaner, you can also add `Organize fields`, keep only `user_login` and `ai_credits_used`, and rename the fields to something easier to read, such as `User` and `Credits Used`.
+If you want the ranking table to look cleaner, you can also add `Organize fields`, keep only the aggregated `user_login` and `ai_credits_used`, and rename the fields to something easier to read, such as `User` and `Credits Used`. If you later create a daily trend panel, you can use the `day` field that was preserved in the raw data.
+
+Finally, you can add a `Limit` transformation to control how many rows are displayed. If your organization has many users, showing only the top 10 keeps the table easier to scan.
+
+![Grafana Infinity Query transformations](/assets/img/grafana_infinity_transformations.png)
+
+> The `Limit` transformation only controls how many rows this panel displays.
+> If you need long-term retention or more detailed analysis,
+> it is better to write the data to a database and aggregate it with SQL.
+{: .prompt-info }
 
 ## cronjob
 
@@ -146,10 +183,9 @@ Finally, use a scheduled job to update the Dashboard regularly. This script does
 5. Writes the new Copilot metrics JSON into the Infinity inline data of that panel.
 6. Calls the Grafana API to save the Dashboard.
 
-> The result returned by the GitHub API is in `ndjson`, also known as `JSON Lines`.
-> Because this format is not convenient to process directly in Grafana, the cronjob is used to transform it first.
-> Whether the result should be stored in a database depends on whether you want to keep the data long term.
-> If long-term retention is required, you do not need to install these plugins; storing the data and querying it with SQL is enough.
+> The reports downloaded from the GitHub API are in `ndjson`, also known as `JSON Lines`.
+> This format is not very convenient to render directly in Grafana,
+> so the cronjob first converts it into JSON that Grafana can handle more easily.
 {: .prompt-info }
 
 In real usage, store sensitive values such as `GITHUB_TOKEN` and `GRAFANA_TOKEN` in Secrets or environment variables. Do not hard-code them directly in the script.
@@ -230,8 +266,23 @@ echo
 echo "Dashboard updated successfully."
 ```
 
+After the cronjob runs successfully, the inline data that was originally set to `[]` will be replaced with the new metrics JSON, and Grafana will render the ranking according to the transformations configured earlier.
+
+![Grafana Panel Result](/assets/img/grafana_github_usage_rank.png)
+
+> The screenshot masks the account names because exposing real user accounts is not appropriate for this example.
+{: .prompt-info }
+
+> This example uses the API for the last 28 days and renders the result in Grafana.
+> GitHub Copilot Credit usage resets on the first day of each month,
+> so building a true per-user cumulative usage chart requires more custom logic in the cronjob.
+> I may cover that in a separate article.
+{: .prompt-warn }
+
 ## Summary
 
 The key idea is to extract GitHub Copilot Credit usage from the GitHub management interface and convert it into data that Grafana can display and track. The GitHub API provides the raw usage data, the cronjob regularly processes it, and Grafana handles visualization and future alerting.
+
+The more complete architecture is to call the API, store the data in a database, and let Grafana query from there. That makes it easier to reshape the data with SQL and is a better fit for long-term retention. If you do not want to maintain a database yet, processing the JSON and updating the panel directly is a simple enough starting point.
 
 If your team already uses Grafana for monitoring, this approach lets Copilot usage enter the same monitoring workflow, without requiring everyone who wants to view usage data to access the GitHub admin interface.

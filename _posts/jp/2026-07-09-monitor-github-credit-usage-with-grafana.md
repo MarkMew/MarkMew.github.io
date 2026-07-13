@@ -111,10 +111,38 @@ Panelの基本設定は次のとおりです。
 - Format：`JSON`
 - 初期データ：まずは`[]`で問題ありません
 
+![Grafana Infinity Query](/assets/img/grafana_infinity_query.png)
+
 > `Panel title`は、後続のcronjobで使う`PANEL_TITLE`と一致させる必要があります。scriptはこの名前を使って更新対象のpanelを探します。
 {: .prompt-info }
 
-データソースの設定が終わったら、`Transformations`に切り替えて、最初のtransformationとして`Group by`を追加します。
+データソースの設定が終わったら、Infinity queryの`Parsing options & Result fields`を開きます。ここで後続の処理で使うfieldを先に定義しておくことで、GrafanaにどのJSON keyを読み取り、どの型として扱うかを伝えられます。
+
+この時点では、panelのinline dataはまだ`[]`だけかもしれません。実際のデータはcronjob実行後に書き込まれるため、panel作成時点ではGrafanaがデータ構造を自動推測できない場合があります。fieldの型を先に指定しておかないと、`ai_credits_used`が文字列として扱われ、後続の`Group by`、`SUM`、`Sort by`で期待どおりに処理できないことがあります。
+
+ここで設定するfield名は、後続のcronjobがinline dataへ書き込むJSON keyに対応します。初期データはまだ`[]`なので実際の中身は見えませんが、このあとダウンロードして結合するmetrics JSONには、次のようなfieldが含まれます。
+
+```json
+[
+  {
+    "day": "2026-07-09",
+    "user_login": "octocat",
+    "ai_credits_used": 120
+  }
+]
+```
+
+この例では、少なくとも次の3つのfieldを設定しておきます。
+
+- `day`：データの日付です。型は`Time`、または利用しているGrafana / Infinityのバージョンで選べる日付・時刻系の型にします。後で日別推移や時系列グラフを作る場合に使います。
+- `user_login`：GitHubのユーザー名です。型は`String`にします。後続の集計でグループ化に使います。
+- `ai_credits_used`：Copilot Creditの使用量です。型は`Number`にします。後続の合計と並び替えに使います。
+
+あとで表に組織、モデル、その他のmetricsを表示したい場合は、ここでfieldを追加しても構いません。ただし、この記事の目的はユーザー別の使用量ランキングを作ることなので、まずは`day`、`user_login`、`ai_credits_used`の3つがあれば十分です。
+
+![Grafana Infinity Query parsing option](/assets/img/grafana_infinity_parsing_option.png)
+
+次に`Transformations`に切り替えて、最初のtransformationとして`Group by`を追加します。
 
 `Group by`の設定は次のとおりです。
 
@@ -122,7 +150,7 @@ Panelの基本設定は次のとおりです。
 - Aggregation field：`ai_credits_used`
 - Aggregation：`SUM`
 
-この設定により、同じユーザーの複数行に分かれた`ai_credits_used`を合計できます。これで、直近28日間に各ユーザーが使用したCopilot CreditをDashboard上で確認できます。
+この設定により、同じユーザーの異なる日付行に分かれた`ai_credits_used`を合計できます。これで、直近28日間に各ユーザーが使用したCopilot CreditをDashboard上で確認できます。つまり、`day`は元データ側に時間軸として残しつつ、このランキングpanelではユーザー単位で集計してから表示します。
 
 次に、2つ目のtransformationとして`Sort by`を追加します。
 
@@ -133,7 +161,16 @@ Panelの基本設定は次のとおりです。
 
 これでCredit使用量が多いユーザーから順に表示され、簡単な使用量ランキングになります。
 
-表示をさらに見やすくしたい場合は、`Organize fields`を追加し、`user_login`と`ai_credits_used`だけを残して、表示名を`User`や`Credits Used`のように変更してもよいです。
+ランキング表をさらに見やすくしたい場合は、`Organize fields`を追加し、集計後の`user_login`と`ai_credits_used`だけを残して、表示名を`User`や`Credits Used`のように変更してもよいです。あとで日別推移のpanelを別に作る場合は、元データに残している`day` fieldを使えます。
+
+最後に、`Limit` transformationを追加して表示件数を制限します。Organizationのユーザー数が多い場合は、上位10件だけを表示すると表が見やすくなります。
+
+![Grafana Infinity Query transformations](/assets/img/grafana_infinity_transformations.png)
+
+> ここでの`Limit`は、あくまでpanelに表示する件数を制御するためのものです。
+> 長期保存やより細かい分析が必要な場合は、
+> データベースに保存してSQLで集計する構成のほうが扱いやすくなります。
+{: .prompt-info }
 
 ## cronjob
 
@@ -146,10 +183,9 @@ Panelの基本設定は次のとおりです。
 5. 新しいCopilot metrics JSONを、そのpanelのInfinity inline dataに書き込む。
 6. Grafana APIを呼び出し、Dashboardを保存する。
 
-> GitHub APIから返される結果のデータ形式は`ndjson`で、`JSON Lines`とも呼ばれます。
-> この形式はGrafanaで直接扱いにくいため、cronjobで先に変換しています。
-> 結果をデータベースに保存するかどうかは、長期保存したいかどうか次第です。
-> 長期保存する前提であれば、これらのpluginを入れずに、データを保存してSQLで処理するだけでも十分です。
+> GitHub APIからダウンロードしたreportは`ndjson`形式で、`JSON Lines`とも呼ばれます。
+> この形式はGrafanaで直接表示しにくいため、
+> ここではcronjobでGrafanaが扱いやすいJSONに変換しています。
 {: .prompt-info }
 
 実際に使う場合は、`GITHUB_TOKEN`や`GRAFANA_TOKEN`のような機密情報をSecretや環境変数に保存してください。script内に直接書き込むのは避けます。
@@ -230,8 +266,24 @@ echo
 echo "Dashboard updated successfully."
 ```
 
+CronJobが正常に実行されると、最初に`[]`として設定していたinline dataが新しいmetrics JSONに置き換わり、Grafanaは前述のtransformationsに従ってランキングを表示します。
+
+![Grafana Panel Result](/assets/img/grafana_github_usage_rank.png)
+
+> 実際のユーザーアカウントをそのまま公開するのは適切ではないため、
+> スクリーンショットではアカウント名をマスクしています。
+{: .prompt-info }
+
+> この例では、過去28日分のAPIを使ってGrafanaに表示しています。
+> GitHub Copilot Creditの使用量は毎月1日にリセットされるため、
+> ユーザー別の累積使用量グラフを作る場合は、cronjob側で追加のカスタマイズが必要になります。
+> そのあたりは、また別の記事で扱うかもしれません。
+{: .prompt-warn }
+
 ## まとめ
 
 この方法のポイントは、GitHub Copilot Credit使用量をGitHubの管理画面から取り出し、Grafanaで表示・追跡できるデータに変換することです。GitHub APIが元データを提供し、cronjobが定期的にデータを整形し、Grafanaが可視化と今後のアラートを担当します。
+
+より本格的に運用するなら、APIを呼び出したあとにデータベースへ保存し、Grafanaからそのデータを参照する構成のほうが扱いやすいです。SQLで表示用の形式に整えられますし、長期保存にも向いています。ただ、まずはデータベースを用意せずに始めたい場合は、JSONを整形してpanelを直接更新する方法でも十分にシンプルです。
 
 チームですでにGrafanaを監視基盤として使っている場合、この方法によりCopilotの使用量も同じ監視フローに載せられます。使用量を見たい人全員にGitHub管理画面へのアクセスを付与する必要もありません。

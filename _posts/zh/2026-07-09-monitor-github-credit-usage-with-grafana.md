@@ -110,10 +110,38 @@ Panel 的基本設定如下：
 - Format：`JSON`
 - 初始資料：可以先填入 `[]`
 
+![Grafana Infinity Query](/assets/img/grafana_infinity_query.png)
+
 > `Panel title` 需要和後面 cronjob 裡的 `PANEL_TITLE` 一致，因為 script 會透過這個名稱找到要更新的 panel。
 {: .prompt-info }
 
-完成資料來源設定後，切換到 `Transformations`，新增第一個 transformation：`Group by`。
+完成資料來源設定後，接著要在 Infinity query 裡展開 `Parsing options & Result fields`。這裡可以先把後面會用到的欄位定義出來，讓 Grafana 知道要從 JSON 中讀取哪些 key，以及每個欄位應該用什麼型態處理。
+
+因為這個 panel 一開始的 inline data 可能只是 `[]`，真正的資料會等到 cronjob 執行後才寫入，所以 Grafana 不一定能在建立 panel 時自動推斷實際資料結構。如果沒有先指定欄位型態，`ai_credits_used` 有可能被當成字串處理，後面在做 `Group by`、`SUM` 或 `Sort by` 時，結果就可能不如預期。
+
+這裡的欄位名稱會對應到後面 cronjob 寫進 inline data 的 JSON key。雖然現在初始資料還是 `[]`，看不到實際內容，但本文後面下載並合併的 metrics JSON 會包含類似下面的欄位：
+
+```json
+[
+  {
+    "day": "2026-07-09",
+    "user_login": "octocat",
+    "ai_credits_used": 120
+  }
+]
+```
+
+因此這裡至少需要先設定以下三個欄位：
+
+- `day`：資料日期，型態設定為 `Time` 或日期欄位，後續如果要看每日變化或做時間序圖表，就會用到這個欄位。
+- `user_login`：使用者帳號，型態設定為 `String`，後面會用它來分組。
+- `ai_credits_used`：Copilot Credit 用量，型態設定為 `Number`，後面會用它來加總與排序。
+
+如果後續想在表格中顯示更多資訊，例如組織、模型或其他 metrics，也可以在這裡繼續新增欄位。不過這篇的目標是做使用者用量排行榜，所以先保留 `day`、`user_login` 與 `ai_credits_used` 這三個欄位就足夠了。
+
+![Grafana Infinity Query parsing option](/assets/img/grafana_infinity_parsing_option.png)
+
+然後切換到 `Transformations`，新增第一個 transformation：`Group by`。
 
 `Group by` 的設定如下：
 
@@ -121,7 +149,7 @@ Panel 的基本設定如下：
 - Aggregation field：`ai_credits_used`
 - Aggregation：`SUM`
 
-這個設定會把同一個使用者在不同資料列中的 `ai_credits_used` 加總起來，讓 Dashboard 可以看出每位使用者在最近 28 天內的 Copilot Credit 用量。
+這個設定會把同一個使用者在不同日期資料列中的 `ai_credits_used` 加總起來，讓 Dashboard 可以看出每位使用者在最近 28 天內的 Copilot Credit 用量。也就是說，`day` 會保留在原始資料中，用來表示資料的時間序；而這個排行榜 panel 會先依照使用者彙總後再呈現排名。
 
 接著新增第二個 transformation：`Sort by`。
 
@@ -132,7 +160,16 @@ Panel 的基本設定如下：
 
 這樣就可以讓 Credit 用量最高的使用者排在最上方，變成一個簡單的使用量排行榜。
 
-如果想讓畫面更乾淨，也可以再加上 `Organize fields`，只保留 `user_login` 與 `ai_credits_used`，並將欄位名稱改成比較容易閱讀的名稱，例如 `User` 與 `Credits Used`。
+如果想讓排行榜畫面更乾淨，也可以再加上 `Organize fields`，只保留彙總後的 `user_login` 與 `ai_credits_used`，並將欄位名稱改成比較容易閱讀的名稱，例如 `User` 與 `Credits Used`。如果後續要另外做每日趨勢圖，就可以使用前面保留下來的 `day` 欄位。
+
+最後可以再加入 `Limit` transformation 限制顯示筆數。如果組織中的使用者很多，只顯示前 10 名會讓圖表更簡潔。
+
+![Grafana Infinity Query transformations](/assets/img/grafana_infinity_transformations.png)
+
+> 這裡的 `Limit` 只是控制 panel 顯示筆數。
+> 如果需要長期保存資料或做更細的統計，
+> 建議把資料寫進資料庫後再用 SQL 聚合。
+{: .prompt-info }
 
 ## cronjob
 
@@ -145,10 +182,9 @@ Panel 的基本設定如下：
 5. 將新的 Copilot metrics JSON 寫入該 panel 的 Infinity inline data。
 6. 呼叫 Grafana API 儲存 Dashboard。
 
-> 呼叫 GitHub API 取得結果的資料型態為 `ndjson` 也稱 `JSON Lines`，
-> 因為不好直接用 Grafana 處理，所以才用 cronjob 處理，
-> 至於結果是不要要存進資料庫，就看大家是否想要長期保存，
-> 有打算長期保存，其實就不需要安裝這些套件，直接下 SQL 處理就可以了。
+> GitHub API 回傳的 report 下載後是 `ndjson`，也稱 `JSON Lines`。
+> 這種格式不太適合直接丟給 Grafana 呈現，
+> 所以這裡先用 cronjob 轉成 Grafana 比較好處理的 JSON。
 {: .prompt-info }
 
 實際使用時，建議把 `GITHUB_TOKEN`、`GRAFANA_TOKEN` 這類敏感資訊放在 Secret 或環境變數中，不要直接寫死在 script 裡。
@@ -229,8 +265,25 @@ echo
 echo "Dashboard updated successfully."
 ```
 
+成功執行 CronJob 後，原本設定為 `[]` 的 inline data 會被新的 metrics JSON 取代，Grafana 也會依照前面設定的 transformations 顯示排行榜。
+
+![Grafana Panel Result](/assets/img/grafana_github_usage_rank.png)
+
+> 不太適合直接揭露使用者帳號，
+> 因此對帳號的部分做了遮罩。
+{: .prompt-info }
+
+> 這個範例是以過去 28 天這支 API 為例，
+> 調用後在 Grafana 上做呈現，
+> 不過 GitHub Copilot 每個月第一天 Credits 用量會歸零，
+> 如果要做到使用者累積用量圖，則在 cronjob 上會有比較多客製，
+> 有興趣的話，我之後再寫一篇
+{: .prompt-warn }
+
 ## 小結
 
 這個做法的重點是把 GitHub Copilot Credit 用量從 GitHub 管理介面中抽出來，轉成 Grafana 可以呈現與追蹤的資料。GitHub API 負責提供原始用量資料，cronjob 負責定期整理資料，Grafana 則負責呈現與後續告警。
+
+比較完整的做法是呼叫 API 後先將資料存進資料庫，再由 Grafana 查詢與呈現。這樣可以透過 SQL 將資料整理成想要的格式，也比較適合長期保存。不過如果暫時不想維護資料庫，先處理 JSON 再更新 panel，也是一個足夠簡單的做法。
 
 如果團隊本來就已經使用 Grafana 做監控，這種方式可以讓 Copilot 用量也進入同一套監控流程，不需要讓每個想查看用量的人都進到 GitHub 後台。
