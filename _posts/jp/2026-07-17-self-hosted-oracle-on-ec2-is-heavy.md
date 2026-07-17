@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "OracleをEC2で自前運用するということ：構築から運用まで、想像以上に重い"
-image: https://fastly.picsum.photos/id/388/1200/630.jpg?hmac=3X4hBgiMUuCq4LWzGXpRr8aLv-ruGrEdVjJ5GJ_NBWc
+image: https://fastly.picsum.photos/id/366/1200/630.jpg?hmac=XylRtAp3wu3AH4jqKv5S8MnRvYjhcf3wqIflnoV7uOg
 description: "OracleをEC2上に構築することは、オンプレミス運用の延長に見えるかもしれません。しかし実際には、ディスク分割、マウント、監視、バックアップ、Patch、障害対応まで、データベース基盤の責任がすべてチームに戻ってきます。"
 author: Mark_Mew
 categories: [AWS, Database]

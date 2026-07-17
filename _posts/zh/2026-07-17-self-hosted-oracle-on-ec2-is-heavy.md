@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "自管 Oracle on EC2：從部署到維運，每一步都比想像中重"
-image: https://fastly.picsum.photos/id/388/1200/630.jpg?hmac=3X4hBgiMUuCq4LWzGXpRr8aLv-ruGrEdVjJ5GJ_NBWc
+image: https://fastly.picsum.photos/id/366/1200/630.jpg?hmac=XylRtAp3wu3AH4jqKv5S8MnRvYjhcf3wqIflnoV7uOg
 description: "把 Oracle 架在 EC2 上看似只是延續地端維運方式，但實際上從磁碟切分、掛載、監控、備份、Patch 到事故處理，每一步都會把資料庫平台的責任重新交回團隊手上。"
 author: Mark_Mew
 categories: [AWS, Database]

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Self-Hosting Oracle on EC2: From Deployment to Operations, Every Step Is Heavier Than Expected"
-image: https://fastly.picsum.photos/id/388/1200/630.jpg?hmac=3X4hBgiMUuCq4LWzGXpRr8aLv-ruGrEdVjJ5GJ_NBWc
+image: https://fastly.picsum.photos/id/366/1200/630.jpg?hmac=XylRtAp3wu3AH4jqKv5S8MnRvYjhcf3wqIflnoV7uOg
 description: "Running Oracle on EC2 may look like a simple extension of on-premises operations, but in practice disk layout, mounting, monitoring, backups, patching, and incident recovery all push database platform responsibilities back onto the team."
 author: Mark_Mew
 categories: [AWS, Database]
