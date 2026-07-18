@@ -4,7 +4,7 @@ title: "How to Choose a Primary Key: Auto Increment vs UUID vs Natural Keys"
 description: "Should a database primary key use auto increment, UUID, or a natural key? This article compares the trade-offs from performance, security, and scalability perspectives."
 author: Mark_Mew
 categories: [database]
-tags: [primary key, uuid]
+tags: [primary key, uuid, Database]
 keywords: [primary key, database primary key, primary key design, auto increment, UUID, natural key, surrogate key, database design, database schema]
 date: 2026-4-13
 lang: en

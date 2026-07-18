@@ -4,7 +4,7 @@ title: "Primary Key はどう選ぶ？Auto Increment・UUID・自然キーの設
 description: "データベースの Primary Key は Auto Increment、UUID、それとも自然キーにするべきか。性能・安全性・拡張性の観点から実務的に比較します。"
 author: Mark_Mew
 categories: [database]
-tags: [primary key, uuid]
+tags: [primary key, uuid, Database]
 keywords: [primary key, データベース主キー, 主キー設計, auto increment, UUID, 自然キー, surrogate key, natural key, データベース設計]
 date: 2026-4-13
 lang: ja

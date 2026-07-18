@@ -4,7 +4,7 @@ title: "Primary Key 怎麼選？Auto Increment、UUID、與自然鍵設計比較
 description: "資料庫主鍵該用Auto Increment、UUID，還是自然鍵？本文整理各種主鍵設計方式的差異，並從效能、安全性與擴充性角度分析實務上的選擇。"
 author: Mark_Mew
 categories: [database]
-tags: [primary key, uuid]
+tags: [primary key, uuid, Database]
 keywords: [資料庫主鍵, primary key, 資料庫主鍵設計, primary key design, 自增 ID, auto increment, UUID, 自然鍵, surrogate key, natural key, 資料庫設計]
 date: 2026-4-13
 ---

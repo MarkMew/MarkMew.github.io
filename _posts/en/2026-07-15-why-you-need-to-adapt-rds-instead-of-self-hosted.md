@@ -4,7 +4,7 @@ title: "Why You Should Consider Using RDS Instead of Continuing to Self-Host a D
 image: https://fastly.picsum.photos/id/388/1200/630.jpg?hmac=3X4hBgiMUuCq4LWzGXpRr8aLv-ruGrEdVjJ5GJ_NBWc
 description: "Running a database on EC2 may look flexible, but in practice you must handle capacity, backups, recovery, connections, monitoring, and patching yourself. This article explains why most teams should consider Amazon RDS first, and what limitations to keep in mind when adopting it."
 author: Mark_Mew
-categories: [AWS, RDS]
+categories: [AWS, EC2]
 tags: [RDS, Database, AWS]
 keywords: [RDS, Database, EC2, Self-hosted Database, PITR, RDS Proxy, CloudWatch, AWS Backup]
 lang: en
