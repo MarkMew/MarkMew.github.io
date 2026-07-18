@@ -340,7 +340,7 @@ If your production infrastructure is already managed by Terraform, I recommend m
 
 The following simplified example shows the relationship among the subnet group, parameter group, Security Group, S3 bucket, IAM role, option group, and RDS DB instance. In a real environment, connect VPC, subnets, KMS, passwords, tags, and naming rules to your existing modules.
 
-```hcl
+```terraform
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}

@@ -1,0 +1,65 @@
+/*
+ * Improve syntax contrast for Terraform/HCL snippets.
+ * Scoped to these languages only, so other code blocks keep theme defaults.
+ */
+.language-hcl.highlighter-rouge .highlight .k,
+.language-terraform.highlighter-rouge .highlight .k {
+  color: #0a58ca;
+  font-weight: 600;
+}
+
+.language-hcl.highlighter-rouge .highlight .nx,
+.language-terraform.highlighter-rouge .highlight .nx {
+  color: #0f766e;
+}
+
+.language-hcl.highlighter-rouge .highlight .s2,
+.language-terraform.highlighter-rouge .highlight .s2 {
+  color: #b45309;
+}
+
+.language-hcl.highlighter-rouge .highlight .mi,
+.language-terraform.highlighter-rouge .highlight .mi {
+  color: #0e7490;
+}
+
+.language-hcl.highlighter-rouge .highlight .o,
+.language-terraform.highlighter-rouge .highlight .o,
+.language-hcl.highlighter-rouge .highlight .p,
+.language-terraform.highlighter-rouge .highlight .p {
+  color: inherit;
+}
+
+html[data-mode='dark'] .language-hcl.highlighter-rouge .highlight .k,
+html[data-mode='dark'] .language-terraform.highlighter-rouge .highlight .k {
+  color: #7dd3fc;
+}
+
+html[data-mode='dark'] .language-hcl.highlighter-rouge .highlight .nx,
+html[data-mode='dark'] .language-terraform.highlighter-rouge .highlight .nx {
+  color: #86efac;
+}
+
+html[data-mode='dark'] .language-hcl.highlighter-rouge .highlight .s2,
+html[data-mode='dark'] .language-terraform.highlighter-rouge .highlight .s2 {
+  color: #fdba74;
+}
+
+html[data-mode='dark'] .language-hcl.highlighter-rouge .highlight .mi,
+html[data-mode='dark'] .language-terraform.highlighter-rouge .highlight .mi {
+  color: #67e8f9;
+}
+
+html[data-mode='dark'] .language-hcl.highlighter-rouge .highlight .o,
+html[data-mode='dark'] .language-terraform.highlighter-rouge .highlight .o,
+html[data-mode='dark'] .language-hcl.highlighter-rouge .highlight .p,
+html[data-mode='dark'] .language-terraform.highlighter-rouge .highlight .p {
+  color: inherit;
+}
+
+.language-hcl.highlighter-rouge .highlight .err,
+.language-terraform.highlighter-rouge .highlight .err {
+  color: inherit;
+  background: transparent;
+  border: 0;
+}

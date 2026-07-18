@@ -340,7 +340,7 @@ Database: 視情況指定，或先連到預設資料庫
 
 下面是一個簡化範例，展示 Subnet Group、Parameter Group、Security Group、S3 bucket、IAM role、Option Group 與 RDS Instance 的關係。實際環境請把 VPC、Subnet、KMS、密碼、Tag 與命名規則接到既有模組。
 
-```hcl
+```terraform
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
