@@ -3,7 +3,7 @@ layout: post
 title: "Running Commands on EC2 On Demand"
 description: "Building on the Systems Manager Session Manager setup, this guide covers how to run commands on EC2 instances using Run Command."
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, SSM]
 keywords: [AWS Systems Manager, Run Command, EC2]
 lang: en

@@ -3,7 +3,7 @@ layout: post
 title: "使用 Systems Manager 管理 AWS 上的 EC2"
 description: "本文介紹 AWS Systems Manager 的核心功能與設定方式，示範如何讓 EC2 不開 SSH 也能安全遠端管理。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Session Manager, EC2]
 date: 2026-5-2

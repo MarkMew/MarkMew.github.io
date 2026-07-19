@@ -3,7 +3,7 @@ layout: post
 title: "Patch Manager で EC2 パッチを自動適用する"
 description: "Session Manager の設定に続いて、Patch Manager を使用して EC2 インスタンスのパッチを自動的に定期スキャン・インストールする方法を解説します。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Patch Manager, EC2, Auto Patching]
 lang: ja

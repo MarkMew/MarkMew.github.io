@@ -3,7 +3,7 @@ layout: post
 title: "State Manager で EC2 設定を自動化管理"
 description: "本記事では AWS Systems Manager の State Manager 機能を紹介し、Association を使って EC2 の望ましい状態を継続的に維持し、定期的なパスワード更新などの自動化タスクを実現する方法を解説します。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, SSM, State Manager]
 keywords: [AWS State Manager, Run Command, EC2, Association, 自動化]
 lang: ja

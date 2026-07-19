@@ -3,7 +3,7 @@ layout: post
 title: "Managing EC2 on AWS with Systems Manager"
 description: "This guide walks through the core concepts and setup steps for AWS Systems Manager, so you can securely manage EC2 instances without opening SSH ports."
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Session Manager, EC2]
 date: 2026-5-2

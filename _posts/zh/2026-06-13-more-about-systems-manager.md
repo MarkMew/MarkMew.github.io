@@ -3,7 +3,7 @@ layout: post
 title: "更多關於 AWS Systems Manager：Inventory、Compliance 與組態管理"
 description: "深入探討 AWS Systems Manager 的進階功能，包括 Inventory 軟體清單、Compliance 合規管理、Maintenance Window 維護窗口，以及 AppConfig 和 Parameter Store 的組態管理應用，幫助企業實現自動化運維與 ISO 稽核合規。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, SSM, State Manager, Systems Manager, ISO, Audit, Inventory, Compliance]
 keywords: [AWS Systems Manager, Inventory, Compliance, AppConfig, Parameter Store, ISO 稽核, 自動化, 組態管理, AWS 運維]
 lang: zh-TW

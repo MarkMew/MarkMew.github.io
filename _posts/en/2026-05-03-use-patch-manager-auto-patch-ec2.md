@@ -3,7 +3,7 @@ layout: post
 title: "Using Patch Manager to Auto-Patch EC2 Instances"
 description: "Following the Systems Manager Session Manager setup, this guide covers Patch Manager to automatically scan and install OS patches on EC2 instances on a schedule."
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Patch Manager, EC2, Auto Patching]
 lang: en

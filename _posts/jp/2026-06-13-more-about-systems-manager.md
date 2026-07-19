@@ -3,7 +3,7 @@ layout: post
 title: "AWS Systems Manager の詳細：Inventory、Compliance、および構成管理"
 description: "Inventory（ソフトウェア一覧）、パッチ／コンプライアンス管理、Maintenance Window、AppConfig、Parameter Store を解説し、運用自動化と ISO 監査対応を支援します。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, SSM, State Manager, Systems Manager, ISO, Audit, Inventory, Compliance]
 keywords: ["AWS Systems Manager", "インベントリ", "ソフトウェアインベントリ", "パッチ管理", "メンテナンスウィンドウ", "AppConfig", "Parameter Store", "ISO監査", "運用自動化", "構成管理"]
 lang: ja

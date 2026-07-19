@@ -3,7 +3,7 @@ layout: post
 title: "按需在 EC2 上執行指令"
 description: "本文承接 Systems Manager 的 Session Manager 設定，進一步介紹如何在 EC2 上執行 Command。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, SSM]
 keywords: [AWS Systems Manager, Run Command, EC2]
 lang: zh-TW

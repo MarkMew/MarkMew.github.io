@@ -3,7 +3,7 @@ layout: post
 title: "使用 Patch Manager 排程幫 EC2 上 Patch"
 description: "本文承接 Systems Manager 的 Session Manager 設定，進一步介紹 Patch Manager，讓 EC2 自動定期掃描與安裝補修程式。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Patch Manager, EC2, Auto Patching]
 lang: zh-TW

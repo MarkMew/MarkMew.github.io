@@ -3,7 +3,7 @@ layout: post
 title: "AWS Systems Manager で EC2 を管理する"
 description: "AWS Systems Manager の基本機能と設定手順を解説し、SSH ポートを開放せずに EC2 を安全にリモート管理する方法を紹介します。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, IAM, SSM]
 keywords: [AWS Systems Manager, Session Manager, EC2]
 date: 2026-5-2

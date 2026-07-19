@@ -3,7 +3,7 @@ layout: post
 title: "More about AWS Systems Manager: Inventory, Compliance and Configuration Management"
 description: "Deep dive into AWS Systems Manager: inventory collection, patch & compliance tracking, maintenance windows, AppConfig and Parameter Store for automated ops and ISO audit readiness."
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, SSM, State Manager, Systems Manager, ISO, Audit, Inventory, Compliance]
 keywords: ["AWS Systems Manager", "Systems Manager inventory", "SSM inventory", "patch management", "maintenance window", "AppConfig", "Parameter Store", "ISO audit", "automation", "configuration management"]
 lang: en

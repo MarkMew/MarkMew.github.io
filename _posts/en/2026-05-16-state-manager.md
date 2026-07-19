@@ -3,7 +3,7 @@ layout: post
 title: "Automate EC2 Configuration Management with State Manager"
 description: "This article introduces AWS Systems Manager's State Manager feature, demonstrating how to use Associations to continuously maintain the desired state of EC2 and implement automated tasks such as regular password rotation."
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, SSM, State Manager]
 keywords: [AWS State Manager, Run Command, EC2, Association, Automation]
 lang: en

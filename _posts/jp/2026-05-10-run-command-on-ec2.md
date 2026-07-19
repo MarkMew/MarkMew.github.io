@@ -3,7 +3,7 @@ layout: post
 title: "EC2 でコマンドをオンデマンド実行する"
 description: "Systems Manager の Session Manager 設定に続いて、Run Command を使って EC2 インスタンス上でコマンドを実行する方法を解説します。"
 author: Mark_Mew
-categories: [AWS]
+categories: [AWS, Systems Manager]
 tags: [AWS, EC2, SSM]
 keywords: [AWS Systems Manager, Run Command, EC2]
 lang: ja
