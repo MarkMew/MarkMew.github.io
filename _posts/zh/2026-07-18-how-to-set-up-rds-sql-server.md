@@ -603,7 +603,7 @@ resource "aws_iam_role_policy_attachment" "sqlserver_backup_restore" {
 
 resource "aws_db_parameter_group" "sqlserver" {
   name   = "sqlserver-demo-parameter-group"
-  family = "sqlserver-ex-16.0"
+  family = "sqlserver-ex-17.0"
 
   tags = {
     Name = "sqlserver-demo-parameter-group"
@@ -614,7 +614,7 @@ resource "aws_db_option_group" "sqlserver" {
   name                     = "sqlserver-demo-option-group"
   option_group_description = "Option group for SQL Server demo"
   engine_name              = "sqlserver-ex"
-  major_engine_version     = "16.00"
+  major_engine_version     = "17.00"
 
   option {
     option_name = "SQLSERVER_BACKUP_RESTORE"
@@ -638,7 +638,7 @@ resource "aws_db_instance" "sqlserver" {
   identifier = "sqlserver-express-demo"
 
   engine         = "sqlserver-ex"
-  engine_version = "16.00"
+  engine_version = "17.00"
   license_model  = "license-included"
 
   instance_class        = "db.t3.small"
