@@ -102,117 +102,9 @@ After it is created, it appears in the parameter group list.
 > Some parameter changes can be applied immediately, while others require a DB reboot. For production, test changes in a non-production environment first and confirm the maintenance window.
 {: .prompt-warning}
 
-### Create an Option Group
-
-An option group is one of the easier RDS settings to overlook. It is not a general database parameter. It is used to enable additional features for specific database engines.
-
-For SQL Server, if you want to use native backup and restore to back up `.bak` files to S3 or restore from S3, you need to add the `SQLSERVER_BACKUP_RESTORE` option to the option group and let RDS use an IAM role with S3 permissions.
-
-![RDS Option Group list page](/assets/img/rds/rds_option_group_list_page.png)
-
-When creating an option group, choose the SQL Server engine and the matching version.
-
-![RDS Option Group create page](/assets/img/rds/rds_option_group_create_page.png)
-
-For a basic demo, you can first create an empty option group. If you need native backup and restore later, add `SQLSERVER_BACKUP_RESTORE`.
-
-![RDS Option Group create sample](/assets/img/rds/rds_option_group_create_sample_page.png)
-
-After it is created, the option group appears in the list.
-
-![RDS Option Group create result](/assets/img/rds/rds_option_group_create_result.png)
-
-> If you only use RDS automated backups and PITR, you do not necessarily need SQL Server native backup and restore. You need this option mainly when importing or exporting `.bak` files, or when integrating with an existing SQL Server backup workflow.
-{: .prompt-info}
-
-### Configure the SQL Server Option Group
-
-If this RDS for SQL Server DB instance needs native backup and restore later, meaning you want to put SQL Server `.bak` files in S3 and restore them to RDS, or back up `.bak` files from RDS to S3, an empty option group is not enough.
-
-This feature requires three components to work together:
-
-| Component | Purpose |
-| --- | --- |
-| S3 bucket | Stores SQL Server `.bak` backup files |
-| IAM role and policy | Allows RDS to read from and write to the specified S3 bucket |
-| Option group | Adds `SQLSERVER_BACKUP_RESTORE` and specifies the IAM role ARN |
-
-The setup order can look like this:
-
-1. Create an S3 bucket dedicated to SQL Server backup files.
-2. Create an IAM role whose trust relationship allows `rds.amazonaws.com` to assume the role.
-3. Attach an S3 permissions policy to the IAM role.
-4. Add `SQLSERVER_BACKUP_RESTORE` to the SQL Server option group.
-5. Set the IAM role ARN in the option setting `IAM_ROLE_ARN`.
-6. Create or modify the RDS DB instance and attach this option group to SQL Server.
-
-The S3 bucket should be in the same Region as the RDS DB instance, because RDS for SQL Server native backup and restore does not support an S3 bucket in a different Region. If the backup file comes from another Region, copy it to the Region where RDS is located first, for example with S3 Replication or another transfer process.
-
-The IAM role trust relationship can follow this pattern:
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "rds.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "StringEquals": {
-          "aws:SourceAccount": "<account-id>"
-        },
-        "ArnLike": {
-          "aws:SourceArn": [
-            "arn:aws:rds:<region>:<account-id>:db:<db-instance-id>",
-            "arn:aws:rds:<region>:<account-id>:og:<option-group-name>"
-          ]
-        }
-      }
-    }
-  ]
-}
-```
-
-The S3 permissions policy must at least allow RDS to list the bucket, get the bucket location, and read and write backup objects:
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:ListBucket",
-        "s3:GetBucketLocation"
-      ],
-      "Resource": "arn:aws:s3:::<bucket-name>"
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObjectAttributes",
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:ListMultipartUploadParts",
-        "s3:AbortMultipartUpload"
-      ],
-      "Resource": "arn:aws:s3:::<bucket-name>/<prefix>/*"
-    }
-  ]
-}
-```
-
-If the backup files need KMS encryption, add `kms:DescribeKey`, `kms:GenerateDataKey`, `kms:Encrypt`, and `kms:Decrypt` for the KMS key to the IAM role, and make sure the KMS key policy allows this IAM role to use the key.
-
-> Use a dedicated bucket, or at least a dedicated prefix such as `sqlserver-native-backup/`. If you leave the prefix empty, RDS might scan unrelated files in the bucket during multifile restore, which makes troubleshooting unnecessarily painful.
-{: .prompt-info}
-
 ### Create the Database
 
-After the subnet group, parameter group, and option group are ready, you can create the RDS DB instance.
+After the subnet group and parameter group are ready, you can create the RDS DB instance. If this database also needs native backup and restore, prepare the option group, S3, and IAM settings described later.
 
 ![RDS Database list page](/assets/img/rds/rds_database_list_page.png)
 
@@ -303,7 +195,7 @@ For monitoring, you can start with the default CloudWatch metrics. If you need m
 Also confirm the following settings:
 
 - Whether the parameter group created earlier is selected.
-- Whether the option group created earlier is selected.
+- If native backup and restore is needed, whether the corresponding option group is selected.
 - Whether the backup retention period meets requirements.
 - Whether the backup window avoids peak traffic.
 - Whether the maintenance window matches the operations schedule.
@@ -313,7 +205,9 @@ Also confirm the following settings:
 > Time zone and collation are not always easy to change after creation. Collation especially affects sorting, comparisons, and case sensitivity. For production, align it with the application, reporting system, and existing database settings first.
 {: .prompt-warning}
 
-After confirming the settings, create the DB instance and wait until its status becomes Available. Then get the endpoint and test the connection with SQL Server Management Studio, Azure Data Studio, DBeaver, or the application.
+After confirming the settings, create the DB instance and wait until its status becomes Available. Creation time depends on the DB instance class, storage settings, and current service conditions. In test environments, it often takes several minutes to a little over ten minutes.
+
+After creation, get the endpoint and test the connection with SQL Server Management Studio, Azure Data Studio, DBeaver, or the application. If automated backups are enabled, RDS handles them according to your configuration. You do not need to trigger the first backup manually.
 
 The connection information usually looks like this:
 
@@ -333,6 +227,233 @@ If you cannot connect, check these items first:
 4. Whether the route table, NACL, VPN, or bastion host is configured correctly.
 5. Whether the SQL Server username and password are correct.
 6. Whether DNS can resolve the RDS endpoint.
+
+### Configure Backup and Restore (Optional)
+
+If this RDS for SQL Server DB instance needs native backup and restore later, meaning you want to put SQL Server `.bak` files in S3 and restore them to RDS, or back up `.bak` files from RDS to S3, you need additional S3, IAM role, and option group settings.
+
+This feature requires three components to work together:
+
+| Component | Purpose |
+| --- | --- |
+| S3 bucket | Stores SQL Server `.bak` backup files |
+| IAM role and policy | Allows RDS to read from and write to the specified S3 bucket |
+| Option group | Adds `SQLSERVER_BACKUP_RESTORE` and specifies the IAM role ARN |
+
+The setup order can look like this:
+
+1. Create an S3 bucket dedicated to SQL Server backup files.
+2. Create an IAM role whose trust relationship allows `rds.amazonaws.com` to assume the role.
+3. Attach an S3 permissions policy to the IAM role.
+4. Add `SQLSERVER_BACKUP_RESTORE` to the SQL Server option group.
+5. Set the IAM role ARN in the option setting `IAM_ROLE_ARN`.
+6. Create or modify the RDS DB instance and apply this option group to SQL Server.
+
+The S3 bucket should be in the same Region as the RDS DB instance, because RDS for SQL Server native backup and restore does not support an S3 bucket in a different Region. If the backup file comes from another Region, copy it to the Region where RDS is located first, for example with S3 Replication or another transfer process.
+
+> `SQLSERVER_BACKUP_RESTORE` and `S3_INTEGRATION` are easy to confuse. The former is the option group option used for `.bak` native backup and restore. The latter transfers files between S3 and the `D:\S3\` folder on the RDS host. This article mainly demonstrates native backup and restore, so the core setting is the `SQLSERVER_BACKUP_RESTORE` option in the option group.
+{: .prompt-info}
+
+#### Create an Option Group
+
+An option group is one of the easier RDS settings to overlook. It is not a general database parameter. It is used to enable additional features for specific database engines.
+
+For SQL Server, if you want to use native backup and restore to back up `.bak` files to S3 or restore from S3, you need to add the `SQLSERVER_BACKUP_RESTORE` option to the option group and let RDS use an IAM role with S3 permissions.
+
+![RDS Option Group list page](/assets/img/rds/rds_option_group_list_page.png)
+
+When creating an option group, choose the SQL Server engine and the matching version.
+
+![RDS Option Group create page](/assets/img/rds/rds_option_group_create_page.png)
+
+If you do not have the IAM role yet, you can first create an empty option group. After the S3 bucket, IAM policy, and IAM role are ready, come back and add `SQLSERVER_BACKUP_RESTORE`, then set `IAM_ROLE_ARN` in the option setting.
+
+![RDS Option Group create sample](/assets/img/rds/rds_option_group_create_sample_page.png)
+
+After it is created, the option group appears in the list.
+
+![RDS Option Group create result](/assets/img/rds/rds_option_group_create_result.png)
+
+> If you only use RDS automated backups and PITR, you do not necessarily need SQL Server native backup and restore. You need this option mainly when importing or exporting `.bak` files, or when integrating with an existing SQL Server backup workflow.
+{: .prompt-info}
+
+#### Create an S3 Bucket
+
+Create an S3 bucket dedicated to SQL Server `.bak` files. The bucket should be in the same Region as the RDS DB instance, because RDS for SQL Server native backup and restore does not support an S3 bucket in a different Region.
+
+If the backup file is already in another Region, usually you copy it to the Region where RDS is located first, using S3 Replication or another synchronization method, and then let RDS import or restore it.
+
+![Create S3 backup and restore bucket](/assets/img/rds/rds_s3_backup_restore_bucket.png)
+
+#### Create an IAM Policy to Access the S3 Bucket
+
+Before creating the IAM role, I recommend creating the IAM policy first. This lets you search for and attach the policy directly when creating the role, instead of going back to add permissions later.
+
+![IAM Policy](/assets/img/rds/rds_iam_policy.png)
+
+The S3 permissions policy must at least allow RDS to list the bucket, get the bucket location, and read and write backup objects:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "arn:aws:s3:::markmew-rds-sql-server-backup-restore"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObjectAttributes",
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:ListMultipartUploadParts",
+        "s3:AbortMultipartUpload"
+      ],
+      "Resource": "arn:aws:s3:::markmew-rds-sql-server-backup-restore/*"
+    }
+  ]
+}
+```
+
+![IAM Policy review and create](/assets/img/rds/rds_iam_policy_review_and_create.png)
+
+> Use a dedicated bucket, or at least a dedicated prefix such as `sqlserver-native-backup/`. If you leave the prefix empty, RDS might scan unrelated files in the bucket during multifile restore, which makes troubleshooting unnecessarily painful.
+{: .prompt-info}
+
+If the backup files need KMS encryption, add `kms:DescribeKey`, `kms:GenerateDataKey`, `kms:Encrypt`, and `kms:Decrypt` for the KMS key to the IAM role, and make sure the KMS key policy allows this IAM role to use the key.
+
+#### Create an IAM Role
+
+Next, create an IAM role that RDS can assume. This role provides the permissions required for native backup and restore to access S3, so its trust relationship must at least allow `rds.amazonaws.com` to use it.
+
+![IAM Role](/assets/img/rds/rds_iam_role.png)
+
+If you created the policy earlier, you can now search for it and attach it.
+
+![IAM Role attached policy](/assets/img/rds/rds_iam_role_attached_policy.png)
+
+For the trust relationship, you can start with `rds.amazonaws.com` as the trusted entity.
+
+![IAM Role review and create](/assets/img/rds/rds_iam_role_review_and_create.png)
+
+For production, you can make it stricter by adding `aws:SourceAccount` and `aws:SourceArn`, limiting the role to a specific account, DB instance, and option group:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "rds.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "<account-id>"
+        },
+        "ArnLike": {
+          "aws:SourceArn": [
+            "arn:aws:rds:<region>:<account-id>:db:<db-instance-id>",
+            "arn:aws:rds:<region>:<account-id>:og:<option-group-name>"
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+#### Connect the IAM Role to the Option Group
+
+After the S3 bucket, IAM policy, and IAM role are ready, return to the SQL Server option group, add the `SQLSERVER_BACKUP_RESTORE` option, and set `IAM_ROLE_ARN` to the IAM role ARN you just created.
+
+If the DB instance already exists, confirm that the DB instance is using this option group after modifying it. Some option group changes require a DB instance reboot. For production, perform this during a maintenance window.
+
+#### Additional Note: Enable S3 Integration
+
+If you also need RDS for SQL Server S3 integration in addition to native backup and restore, for example downloading files from S3 to the `D:\S3\` folder on the DB instance host and then processing them with SQL Server features, configure the IAM role on the DB instance's Connectivity & security tab.
+
+Scroll down to the Manage IAM roles section to find the IAM role configuration.
+
+![RDS Manage IAM roles](/assets/img/rds/rds_manage_iam_role.png)
+
+If the IAM role trust relationship is correct, it appears in the dropdown list. For Feature, choose `S3_INTEGRATION`.
+
+![RDS set IAM role](/assets/img/rds/rds_manage_iam_role_settings.png)
+
+After a few minutes, the status changes to active. This means S3 integration is enabled.
+
+> If you only need to run `rds_backup_database` or `rds_restore_database`, the key setting is still the `SQLSERVER_BACKUP_RESTORE` option in the option group. `S3_INTEGRATION` is a separate file transfer feature. Do not treat them as the same setting.
+{: .prompt-warning}
+
+#### Create a `.bak` Backup File and Export It to S3
+
+Use a machine that can connect to SQL Server, and connect to RDS with SQL Server Management Studio, Azure Data Studio, or another SQL client.
+
+The following example creates a full backup of the `my_app` database as a `.bak` file and exports it to S3:
+
+```sql
+exec msdb.dbo.rds_backup_database
+  @source_db_name='my_app',
+  @s3_arn_to_backup_to='arn:aws:s3:::markmew-rds-sql-server-backup-restore/my_app_full.bak',
+  @overwrite_s3_backup_file=1,
+  @type='FULL';
+```
+
+Use `rds_task_status` to check the backup status:
+
+```sql
+exec msdb.dbo.rds_task_status @db_name='my_app';
+```
+
+If you want to list all native backup and restore tasks on the current DB instance, call it without parameters:
+
+```sql
+exec msdb.dbo.rds_task_status;
+```
+
+Unlike operating directly on backup files in an on-premises environment, RDS for SQL Server native backup and restore creates tasks. A task moves from `CREATED` to `IN_PROGRESS`, then to `SUCCESS` after completion. If it fails, it shows `ERROR`, and `task_info` provides the error details.
+
+To restore a `.bak` file from S3, use `rds_restore_database`. Restore cannot overwrite an existing database with the same name, so it is common to restore to a new database name first:
+
+```sql
+exec msdb.dbo.rds_restore_database
+  @restore_db_name='my_app_restore',
+  @s3_arn_to_restore_from='arn:aws:s3:::markmew-rds-sql-server-backup-restore/my_app_full.bak';
+```
+
+##### RDS for SQL Server `rds_*` Stored Procedures and Tasks
+
+When using RDS for SQL Server, many tasks that you might normally perform with a GUI, OS privileges, `sysadmin` privileges, or direct file system access in a self-managed SQL Server environment are handled through Amazon RDS-provided `msdb.dbo.rds_*` stored procedures and functions.
+
+This does not mean native SQL Server syntax is replaced. It is because RDS is a managed service. AWS does not provide shell access to DB instances, and it restricts certain system procedures and system tables that require advanced privileges. AWS wraps common DBA work as RDS-specific procedures and functions so you can perform management actions without touching the underlying host.
+
+AWS provides an official page listing these functions and stored procedures. Common categories include:
+
+| Category | Common procedures / functions | Purpose |
+| --- | --- | --- |
+| Management tasks | `rds_drop_database`, `rds_modify_db_name`, `rds_read_error_log`, `rds_set_configuration` | Drop or rename databases, read error logs, adjust RDS-specific settings |
+| CDC | `rds_cdc_enable_db`, `rds_cdc_disable_db` | Enable or disable change data capture on RDS for SQL Server |
+| Native backup/restore | `rds_backup_database`, `rds_restore_database`, `rds_restore_log`, `rds_finish_restore`, `rds_cancel_task` | Handle `.bak` backup, restore, and cancellation as tasks |
+| Task status | `rds_task_status` | Check native backup and restore task status |
+| S3 file transfer | `rds_download_from_s3`, `rds_upload_to_s3`, `rds_gather_file_details`, `rds_delete_from_filesystem` | Transfer or manage files between S3 and the `D:\S3\` folder on the DB instance host with S3 integration |
+| TDE | `rds_backup_tde_certificate`, `rds_restore_tde_certificate`, `rds_drop_tde_certificate`, `rds_fn_list_user_tde_certificates` | Manage Transparent Data Encryption certificates |
+| SQL Server Agent / system database sync | `rds_set_system_database_sync_objects`, `rds_fn_get_system_database_sync_objects`, `rds_fn_server_object_last_sync_time` | Sync system database objects such as SQL Server Agent jobs in specific scenarios |
+| MSBI | `rds_msbi_task`, `rds_fn_task_status` | Manage or query SSAS, SSIS, and SSRS tasks |
+| Resource Governor | `rds_create_resource_pool`, `rds_alter_resource_pool`, `rds_drop_resource_pool`, `rds_create_workload_group` | Manage Resource Governor objects |
+
+Two status queries are easy to confuse:
+
+- `rds_task_status`: used for native backup and restore tasks, such as `rds_backup_database` and `rds_restore_database`.
+- `rds_fn_task_status`: used for MSBI-related tasks, such as SSAS, SSIS, and SSRS deployment or management tasks.
+
+So if you cannot find a familiar host-level operation on RDS for SQL Server, do not immediately assume that RDS does not support it. First check the official functions and stored procedures list to see whether AWS provides a corresponding `rds_*` procedure or function.
 
 ## Method 2: Create It with Terraform
 
@@ -692,5 +813,9 @@ RDS does not remove all database responsibilities, but it does reduce a lot of l
 - [Importing and exporting SQL Server databases using native backup and restore](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Procedural.Importing.html)
 - [Using native backup and restore](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Procedural.Importing.Native.Using.html)
 - [Troubleshooting native backup and restore](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Procedural.Importing.Native.Troubleshooting.html)
+- [Integrating an Amazon RDS for SQL Server DB instance with Amazon S3](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/User.SQLServer.Options.S3-integration.html)
+- [Enabling RDS for SQL Server integration with S3](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.SQLServer.Options.S3-integration.enabling.html)
+- [Functions and stored procedures for Amazon RDS for Microsoft SQL Server](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Concepts.General.StoredProcedures.html)
+- [Common DBA tasks for Amazon RDS for Microsoft SQL Server](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.SQLServer.CommonDBATasks.html)
 - [Unsupported and limited-support features](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/SQLServer.Concepts.General.FeatureNonSupport.html)
 - [Terraform Registry: aws_db_option_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_option_group)
