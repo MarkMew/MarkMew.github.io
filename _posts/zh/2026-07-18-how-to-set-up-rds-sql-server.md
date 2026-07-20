@@ -375,6 +375,8 @@ S3 bucket、IAM policy 和 IAM role 都準備好後，回到 SQL Server 的 Opti
 
 如果 DB instance 已經建立完成，修改 Option Group 後，記得確認 DB instance 是否已經套用這個 Option Group。某些 Option Group 變更會需要重新啟動 DB instance 才會生效，正式環境請放在維護窗口內操作。
 
+![RDS 備份還原選項群組](/assets/img/rds/rds_option_group_backup_restore.png)
+
 #### 補充：啟用 S3 Integration
 
 如果除了 native backup/restore 以外，也需要使用 RDS for SQL Server 的 S3 integration，例如把 S3 檔案下載到 DB instance host 的 `D:\S3\` 目錄，再用 SQL Server 功能處理檔案，就需要到 DB instance 的 `Connectivity & security` 頁籤設定 IAM role。

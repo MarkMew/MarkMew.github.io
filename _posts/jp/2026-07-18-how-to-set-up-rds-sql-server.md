@@ -375,6 +375,8 @@ S3 バケット、IAM policy、IAM ロールの準備ができたら、SQL Serve
 
 DB instance がすでに存在する場合は、オプショングループ変更後に、その DB instance がこのオプショングループを使用していることを確認してください。一部のオプショングループ変更では DB instance の再起動が必要になるため、本番環境ではメンテナンスウィンドウ内で操作してください。
 
+![RDS バックアップと復元オプショングループ](/assets/img/rds/rds_option_group_backup_restore.png)
+
 #### 補足：S3 Integration を有効化する
 
 ネイティブバックアップおよび復元とは別に、RDS for SQL Server の S3 integration も使いたい場合があります。たとえば S3 のファイルを DB instance host の `D:\S3\` へダウンロードし、その後 SQL Server の機能で処理する場合です。この場合は、DB instance の `Connectivity & security` タブで IAM role を設定します。

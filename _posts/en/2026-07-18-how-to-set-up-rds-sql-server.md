@@ -375,6 +375,8 @@ After the S3 bucket, IAM policy, and IAM role are ready, return to the SQL Serve
 
 If the DB instance already exists, confirm that the DB instance is using this option group after modifying it. Some option group changes require a DB instance reboot. For production, perform this during a maintenance window.
 
+![RDS backup and restore option group](/assets/img/rds/rds_option_group_backup_restore.png)
+
 #### Additional Note: Enable S3 Integration
 
 If you also need RDS for SQL Server S3 integration in addition to native backup and restore, for example downloading files from S3 to the `D:\S3\` folder on the DB instance host and then processing them with SQL Server features, configure the IAM role on the DB instance's Connectivity & security tab.
