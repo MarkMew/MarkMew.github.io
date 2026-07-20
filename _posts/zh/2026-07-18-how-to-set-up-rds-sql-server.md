@@ -492,17 +492,17 @@ variable "backup_prefix" {
   default = "sqlserver-native-backup"
 }
 
-resource "aws_db_subnet_group" "sqlserver" {
-  name       = "sqlserver-demo-subnet-group"
+resource "aws_db_subnet_group" "database" {
+  name       = "rds-database-subenet-group"
   subnet_ids = var.private_subnet_ids
 
   tags = {
-    Name = "sqlserver-demo-subnet-group"
+    Name = "rds-database-subenet-group"
   }
 }
 
 resource "aws_security_group" "sqlserver" {
-  name        = "sqlserver-demo-sg"
+  name        = "sqlserver"
   description = "Allow application access to RDS SQL Server"
   vpc_id      = var.vpc_id
 
@@ -601,16 +601,13 @@ resource "aws_iam_role_policy_attachment" "sqlserver_backup_restore" {
   policy_arn = aws_iam_policy.sqlserver_backup_restore.arn
 }
 
-resource "aws_db_parameter_group" "sqlserver" {
-  name   = "sqlserver-demo-parameter-group"
-  family = "sqlserver-ex-17.0"
-
-  tags = {
-    Name = "sqlserver-demo-parameter-group"
-  }
+resource "aws_db_parameter_group" "mssql_ex_17_parameter_group" {
+  name        = "sqlserver-ex-17-parameter-group"
+  family      = "sqlserver-ex-17.0"
+  description = "sqlserver express 2025 parametergroup"
 }
 
-resource "aws_db_option_group" "sqlserver" {
+resource "aws_db_option_group" "mssql_ex_17" {
   name                     = "sqlserver-demo-option-group"
   option_group_description = "Option group for SQL Server demo"
   engine_name              = "sqlserver-ex"
@@ -638,7 +635,7 @@ resource "aws_db_instance" "sqlserver" {
   identifier = "sqlserver-express-demo"
 
   engine         = "sqlserver-ex"
-  engine_version = "17.00"
+  engine_version = "17.00.4045.5.v1"
   license_model  = "license-included"
 
   instance_class        = "db.t3.small"
@@ -650,11 +647,12 @@ resource "aws_db_instance" "sqlserver" {
   password = var.db_password
   port     = 1433
 
-  db_subnet_group_name   = aws_db_subnet_group.sqlserver.name
+  db_subnet_group_name   = aws_db_subnet_group.database.name
   vpc_security_group_ids = [aws_security_group.sqlserver.id]
-  parameter_group_name   = aws_db_parameter_group.sqlserver.name
-  option_group_name      = aws_db_option_group.sqlserver.name
+  parameter_group_name   = aws_db_parameter_group.mssql_ex_17_parameter_group.name
+  option_group_name      = aws_db_option_group.mssql_ex_17.name
 
+  timezone                = "Taipei Standard Time"
   backup_retention_period = 7
   backup_window           = "18:00-19:00"
   maintenance_window      = "sun:19:00-sun:20:00"
@@ -663,8 +661,6 @@ resource "aws_db_instance" "sqlserver" {
   publicly_accessible = false
   deletion_protection = false
   skip_final_snapshot = true
-
-  enabled_cloudwatch_logs_exports = ["error", "agent"]
 
   tags = {
     Name = "sqlserver-express-demo"
