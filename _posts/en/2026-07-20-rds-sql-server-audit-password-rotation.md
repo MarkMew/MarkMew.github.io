@@ -11,7 +11,7 @@ lang: en
 date: 2026-07-20
 ---
 
-In the previous article, [AWS SQL Server Setup Tutorial: A Complete Walkthrough from Creation to Connection](/posts/how-to-set-up-rds-sql-server/), we walked through the basic RDS for SQL Server setup, including the DB subnet group, DB parameter group, option group, S3, IAM, backup and restore, and connection testing.
+In the previous article, [AWS SQL Server Setup Tutorial: A Complete Walkthrough from Creation to Connection](/en/posts/how-to-set-up-rds-sql-server/), we walked through the basic RDS for SQL Server setup, including the DB subnet group, DB parameter group, option group, S3, IAM, backup and restore, and connection testing.
 
 But if you want to move a database closer to production, "it can connect, it can back up, and it has monitoring" is usually not enough.
 
