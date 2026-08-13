@@ -2,11 +2,11 @@
 layout: post
 title: "如何使用 Amazon S3 架設靜態網站"
 image: https://fastly.picsum.photos/id/954/1200/630.jpg?hmac=c_eAwJdG1uf9VexIXGqgw1DL9Rrtj96kbFIedSnoV7U
-description: "使用 Amazon S3 建立靜態網站，介紹 Bucket 建立、靜態網站託管、公開存取政策、重新導向，以及網站檔案上傳與測試。"
+description: "使用 Amazon S3 建立靜態網站，介紹 Console 與 Terraform 建立 Bucket、靜態網站託管、公開存取政策、重新導向，以及網站檔案上傳與測試。"
 author: Mark_Mew
 categories: [AWS, S3]
-tags: [AWS, S3, Static Website]
-keywords: [AWS, Amazon S3, S3 Static Website, S3 Website Hosting, S3 Bucket Policy]
+tags: [AWS, S3, Static Website, Terraform]
+keywords: [AWS, Amazon S3, S3 Static Website, S3 Website Hosting, S3 Bucket Policy, Terraform]
 lang: zh-TW
 date: 2026-08-13
 ---
@@ -147,6 +147,84 @@ http://YOUR_BUCKET_NAME.s3-website.YOUR_REGION.amazonaws.com
 | S3 REST endpoint | 存取指定物件或使用 S3 API | 支援 | 不套用 Website endpoint 的網站行為 |
 
 例如，`https://YOUR_BUCKET_NAME.s3.YOUR_REGION.amazonaws.com/index.html` 是 REST endpoint 的物件網址。它可以用 HTTPS 讀取指定的 `index.html`，但不等同於 S3 靜態網站的 Website endpoint，也不會完整套用網站根目錄、錯誤頁面與重新導向設定。
+
+## 使用 Terraform 建立
+
+除了使用 AWS Console，也可以使用 Terraform 管理 S3 靜態網站。以下範例會建立 Bucket、物件擁有權設定、公開存取設定、Website configuration，以及允許公開讀取物件的 Bucket policy。
+
+請先將範例中的 Bucket 名稱替換成符合 DNS 命名規則，且在所有 AWS 帳號與 Region 中都唯一的名稱。
+
+```terraform
+resource "aws_s3_bucket" "markmew_s3_static_html" {
+    bucket = "markmew-s3-static-html"
+}
+
+resource "aws_s3_bucket_ownership_controls" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    
+    rule {
+        object_ownership = "BucketOwnerPreferred"
+    }
+}
+
+resource "aws_s3_bucket_public_access_block" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    
+    block_public_acls       = false
+    block_public_policy     = false
+    ignore_public_acls      = false
+    restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "markmew_s3_static_html" {
+    depends_on = [
+        aws_s3_bucket_ownership_controls.markmew_s3_static_html,
+        aws_s3_bucket_public_access_block.markmew_s3_static_html,
+    ]
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    acl    = "public-read"
+}
+
+resource "aws_s3_bucket_website_configuration" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+
+    index_document {
+        suffix = "index.html"
+    }
+
+    error_document {
+        key = "error.html"
+    }
+}
+
+data "aws_iam_policy_document" "markmew_s3_static_html_public_read" {
+    statement {
+        sid    = "AllowPublicReadForWebsite"
+        effect = "Allow"
+
+        principals {
+            type        = "*"
+            identifiers = ["*"]
+        }
+
+        actions = [
+            "s3:GetObject",
+        ]
+
+        resources = [
+            "${aws_s3_bucket.markmew_s3_static_html.arn}/*",
+        ]
+    }
+}
+
+resource "aws_s3_bucket_policy" "markmew_s3_static_html_public_read" {
+    depends_on = [
+        aws_s3_bucket_public_access_block.markmew_s3_static_html,
+    ]
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    policy = data.aws_iam_policy_document.markmew_s3_static_html_public_read.json
+}
+```
 
 ## 監控請求與成本
 

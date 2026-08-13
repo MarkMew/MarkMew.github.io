@@ -2,11 +2,11 @@
 layout: post
 title: "How to Host a Static Website on Amazon S3"
 image: https://fastly.picsum.photos/id/954/1200/630.jpg?hmac=c_eAwJdG1uf9VexIXGqgw1DL9Rrtj96kbFIedSnoV7U
-description: "Learn how to build a static website with Amazon S3, including bucket creation, static website hosting, public access policies, redirects, and uploading and testing website files."
+description: "Learn how to build a static website with Amazon S3 using the Console and Terraform, including bucket creation, static website hosting, public access policies, redirects, and uploading and testing website files."
 author: Mark_Mew
 categories: [AWS, S3]
-tags: [AWS, S3, Static Website]
-keywords: [AWS, Amazon S3, S3 Static Website, S3 Website Hosting, S3 Bucket Policy]
+tags: [AWS, S3, Static Website, Terraform]
+keywords: [AWS, Amazon S3, S3 Static Website, S3 Website Hosting, S3 Bucket Policy, Terraform]
 lang: en
 date: 2026-08-13
 ---
@@ -147,6 +147,84 @@ These two types of URL are easy to confuse:
 | S3 REST endpoint | Access a specific object or use the S3 API | Supported | Does not apply S3 Website endpoint behavior |
 
 For example, `https://YOUR_BUCKET_NAME.s3.YOUR_REGION.amazonaws.com/index.html` is an object URL using the REST endpoint. It can use HTTPS to read the specific `index.html` object, but it is not the S3 Website endpoint and does not fully apply the website root, error page, or redirect settings.
+
+## Create the Website with Terraform
+
+Instead of using the AWS Console, you can also manage the S3 static website with Terraform. The following example creates the bucket, object ownership settings, public access settings, website configuration, and a bucket policy that allows public read access to objects.
+
+Replace the bucket name in the example with a name that follows DNS naming rules and is globally unique across all AWS accounts and Regions.
+
+```terraform
+resource "aws_s3_bucket" "markmew_s3_static_html" {
+    bucket = "markmew-s3-static-html"
+}
+
+resource "aws_s3_bucket_ownership_controls" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    
+    rule {
+        object_ownership = "BucketOwnerPreferred"
+    }
+}
+
+resource "aws_s3_bucket_public_access_block" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    
+    block_public_acls       = false
+    block_public_policy     = false
+    ignore_public_acls      = false
+    restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "markmew_s3_static_html" {
+    depends_on = [
+        aws_s3_bucket_ownership_controls.markmew_s3_static_html,
+        aws_s3_bucket_public_access_block.markmew_s3_static_html,
+    ]
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    acl    = "public-read"
+}
+
+resource "aws_s3_bucket_website_configuration" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+
+    index_document {
+        suffix = "index.html"
+    }
+
+    error_document {
+        key = "error.html"
+    }
+}
+
+data "aws_iam_policy_document" "markmew_s3_static_html_public_read" {
+    statement {
+        sid    = "AllowPublicReadForWebsite"
+        effect = "Allow"
+
+        principals {
+            type        = "*"
+            identifiers = ["*"]
+        }
+
+        actions = [
+            "s3:GetObject",
+        ]
+
+        resources = [
+            "${aws_s3_bucket.markmew_s3_static_html.arn}/*",
+        ]
+    }
+}
+
+resource "aws_s3_bucket_policy" "markmew_s3_static_html_public_read" {
+    depends_on = [
+        aws_s3_bucket_public_access_block.markmew_s3_static_html,
+    ]
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    policy = data.aws_iam_policy_document.markmew_s3_static_html_public_read.json
+}
+```
 
 ## Monitor Requests and Costs
 

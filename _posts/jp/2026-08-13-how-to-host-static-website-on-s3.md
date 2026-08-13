@@ -2,11 +2,11 @@
 layout: post
 title: "Amazon S3 を使用して静的ウェブサイトを構築する方法"
 image: https://fastly.picsum.photos/id/954/1200/630.jpg?hmac=c_eAwJdG1uf9VexIXGqgw1DL9Rrtj96kbFIedSnoV7U
-description: "Amazon S3 を使って静的ウェブサイトを構築する方法を紹介します。バケットの作成、静的ウェブサイトホスティング、パブリックアクセス用のポリシー、リダイレクト、ウェブサイトファイルのアップロードと確認まで説明します。"
+description: "Amazon S3 を使って静的ウェブサイトを構築する方法を紹介します。Console と Terraform によるバケットの作成、静的ウェブサイトホスティング、パブリックアクセス用のポリシー、リダイレクト、ウェブサイトファイルのアップロードと確認まで説明します。"
 author: Mark_Mew
 categories: [AWS, S3]
-tags: [AWS, S3, Static Website]
-keywords: [AWS, Amazon S3, S3 Static Website, S3 Website Hosting, S3 Bucket Policy]
+tags: [AWS, S3, Static Website, Terraform]
+keywords: [AWS, Amazon S3, S3 Static Website, S3 Website Hosting, S3 Bucket Policy, Terraform]
 lang: ja
 date: 2026-08-13
 ---
@@ -147,6 +147,84 @@ http://YOUR_BUCKET_NAME.s3-website.YOUR_REGION.amazonaws.com
 | S3 REST endpoint | 特定のオブジェクトへのアクセス、または S3 API の利用 | 対応 | Website endpoint の動作は適用されない |
 
 たとえば、`https://YOUR_BUCKET_NAME.s3.YOUR_REGION.amazonaws.com/index.html` は REST endpoint を使ったオブジェクト URL です。指定した `index.html` は HTTPS で読み取れますが、S3 静的ウェブサイトの Website endpoint ではありません。そのため、ウェブサイトのルート、エラーページ、リダイレクトの設定は完全には適用されません。
+
+## Terraform でウェブサイトを構築する
+
+AWS Console の代わりに、Terraform で S3 静的ウェブサイトを管理することもできます。次の例では、バケット、オブジェクト所有権、パブリックアクセス設定、Website configuration、およびオブジェクトのパブリック読み取りを許可するバケットポリシーを作成します。
+
+サンプル内のバケット名は、DNS 命名規則に従い、すべての AWS アカウントと Region で一意になる名前に置き換えてください。
+
+```terraform
+resource "aws_s3_bucket" "markmew_s3_static_html" {
+    bucket = "markmew-s3-static-html"
+}
+
+resource "aws_s3_bucket_ownership_controls" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    
+    rule {
+        object_ownership = "BucketOwnerPreferred"
+    }
+}
+
+resource "aws_s3_bucket_public_access_block" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    
+    block_public_acls       = false
+    block_public_policy     = false
+    ignore_public_acls      = false
+    restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_acl" "markmew_s3_static_html" {
+    depends_on = [
+        aws_s3_bucket_ownership_controls.markmew_s3_static_html,
+        aws_s3_bucket_public_access_block.markmew_s3_static_html,
+    ]
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    acl    = "public-read"
+}
+
+resource "aws_s3_bucket_website_configuration" "markmew_s3_static_html" {
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+
+    index_document {
+        suffix = "index.html"
+    }
+
+    error_document {
+        key = "error.html"
+    }
+}
+
+data "aws_iam_policy_document" "markmew_s3_static_html_public_read" {
+    statement {
+        sid    = "AllowPublicReadForWebsite"
+        effect = "Allow"
+
+        principals {
+            type        = "*"
+            identifiers = ["*"]
+        }
+
+        actions = [
+            "s3:GetObject",
+        ]
+
+        resources = [
+            "${aws_s3_bucket.markmew_s3_static_html.arn}/*",
+        ]
+    }
+}
+
+resource "aws_s3_bucket_policy" "markmew_s3_static_html_public_read" {
+    depends_on = [
+        aws_s3_bucket_public_access_block.markmew_s3_static_html,
+    ]
+    bucket = aws_s3_bucket.markmew_s3_static_html.id
+    policy = data.aws_iam_policy_document.markmew_s3_static_html_public_read.json
+}
+```
 
 ## リクエストとコストを監視する
 
