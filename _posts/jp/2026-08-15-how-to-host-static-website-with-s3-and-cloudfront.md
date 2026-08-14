@@ -8,7 +8,7 @@ categories: [AWS, S3, CloudFront]
 tags: [AWS, S3, CloudFront, Terraform, Static Website]
 keywords: [AWS, Amazon S3, CloudFront, Origin Access Control, OAC, Static Website, Terraform, HTTPS]
 lang: ja
-date: 2026-08-14
+date: 2026-08-15
 ---
 
 前回の記事では、[Amazon S3 だけで静的ウェブサイトをホストする方法](/ja/posts/how-to-host-static-website-on-s3/)を紹介しました。この方法は簡単ですが、S3 Website endpoint は HTTP のみに対応しており、バケットのコンテンツをパブリックに読み取れる状態にする必要があります。

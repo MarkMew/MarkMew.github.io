@@ -8,7 +8,7 @@ categories: [AWS, S3, CloudFront]
 tags: [AWS, S3, CloudFront, Terraform, Static Website]
 keywords: [AWS, Amazon S3, CloudFront, Origin Access Control, OAC, Static Website, Terraform, HTTPS]
 lang: zh-TW
-date: 2026-08-14
+date: 2026-08-15
 ---
 
 上一篇文章介紹了[如何單獨使用 Amazon S3 架設靜態網站](/posts/how-to-host-static-website-on-s3/)。這種方式設定簡單，但 S3 Website endpoint 只支援 HTTP，而且必須讓 Bucket 內容可以被公開讀取。

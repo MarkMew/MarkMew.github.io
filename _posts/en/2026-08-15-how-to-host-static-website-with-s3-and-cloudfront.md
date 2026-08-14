@@ -8,7 +8,7 @@ categories: [AWS, S3, CloudFront]
 tags: [AWS, S3, CloudFront, Terraform, Static Website]
 keywords: [AWS, Amazon S3, CloudFront, Origin Access Control, OAC, Static Website, Terraform, HTTPS]
 lang: en
-date: 2026-08-14
+date: 2026-08-15
 ---
 
 The [previous article covered how to host a static website using Amazon S3 alone](/en/posts/how-to-host-static-website-on-s3/). This approach is simple, but the S3 Website endpoint supports HTTP only, and the bucket content must be publicly readable.
