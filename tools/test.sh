@@ -64,6 +64,8 @@ main() {
   cp -R .well-known/. "$SITE_DIR$_baseurl/.well-known/"
   test -f "$SITE_DIR$_baseurl/.well-known/agent-skills/index.json"
   test -f "$SITE_DIR$_baseurl/.well-known/ai-catalog.json"
+  cp robots.txt "$SITE_DIR$_baseurl/robots.txt"
+  grep -q '^Content-Signal: ai-train=no, search=yes, ai-input=yes$' "$SITE_DIR$_baseurl/robots.txt"
 
   ruby tools/beautify_sitemap.rb "$SITE_DIR$_baseurl"
 

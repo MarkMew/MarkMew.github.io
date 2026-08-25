@@ -1,0 +1,6 @@
+User-agent: *
+Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+Disallow: /norobots/
+
+Sitemap: https://www.markmew.com/sitemap.xml
