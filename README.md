@@ -29,6 +29,15 @@ latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so tha
 
 Check out the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy/wiki).
 
+## Agent discovery headers
+
+The `_headers` file declares RFC 8288 `Link` response headers for the homepage:
+
+- `describedby` points agents to [`llms.txt`](https://www.markmew.com/llms.txt), the site's machine-readable content guide.
+- `index` points agents to [`sitemap.xml`](https://www.markmew.com/sitemap.xml), the site's machine-readable URL index.
+
+This repository deploys through GitHub Pages, which does not process `_headers`. To make these headers available on the live custom domain, apply the same rules in Cloudflare using a Transform Rule or Worker on the proxied domain. The generated HTML `<link>` metadata cannot substitute for HTTP response headers.
+
 ## Multilingual posts (minimal setup)
 
 This site is configured with `jekyll-polyglot` and supports `zh-TW`, `en`, `ja`.
