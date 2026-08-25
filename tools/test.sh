@@ -60,6 +60,11 @@ main() {
   JEKYLL_ENV=production bundle exec jekyll b \
     -d "$SITE_DIR$_baseurl" -c "$_config"
 
+  mkdir -p "$SITE_DIR$_baseurl/.well-known"
+  cp -R .well-known/. "$SITE_DIR$_baseurl/.well-known/"
+  test -f "$SITE_DIR$_baseurl/.well-known/agent-skills/index.json"
+  test -f "$SITE_DIR$_baseurl/.well-known/ai-catalog.json"
+
   ruby tools/beautify_sitemap.rb "$SITE_DIR$_baseurl"
 
   # test

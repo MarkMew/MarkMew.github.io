@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "cloud-infrastructure-research",
+      "type": "skill-md",
+      "description": "Research AWS, Kubernetes, DevOps, CI/CD, observability, databases, Linux, and AI-era content governance using the Mark Mew technical blog.",
+      "url": "https://www.markmew.com/.well-known/agent-skills/cloud-infrastructure-research/SKILL.md",
+      "digest": "sha256:b8f47fb5b91c69bb96c5e8cb866e6e01f13ee03ae7f98e2b3a4f6a3f0e8d4c2b"
+    }
+  ]
+}

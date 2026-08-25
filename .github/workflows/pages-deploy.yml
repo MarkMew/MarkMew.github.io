@@ -50,6 +50,9 @@ jobs:
         env:
           JEKYLL_ENV: "production"
 
+      - name: Publish well-known resources
+        run: cp -R .well-known "_site${{ steps.pages.outputs.base_path }}/.well-known"
+
       - name: Generate multi-language sitemap
         run: ruby tools/generate_sitemap.rb "_site${{ steps.pages.outputs.base_path }}"
 

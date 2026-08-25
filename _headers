@@ -4,3 +4,9 @@
 /.well-known/ai-catalog.json
   Access-Control-Allow-Origin: *
   Content-Type: application/json
+/.well-known/agent-skills/index.json
+  Access-Control-Allow-Origin: *
+  Content-Type: application/json
+/.well-known/agent-skills/*/SKILL.md
+  Access-Control-Allow-Origin: *
+  Content-Type: text/markdown
