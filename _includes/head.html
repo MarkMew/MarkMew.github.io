@@ -5,6 +5,7 @@
 {% assign localized_og_locale = lang | default: site.lang | replace: '-', '_' %}
 
 <head>
+  <link rel="ai-catalog" href="{{ '/.well-known/ai-catalog.json' | relative_url }}">
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f7f7">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1b1b1e">

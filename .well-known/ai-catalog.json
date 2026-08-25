@@ -1,0 +1,42 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "雲端魔法師",
+    "identifier": "https://www.markmew.com/"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:www.markmew.com:content:llms-txt",
+      "displayName": "雲端魔法師 AI content guide",
+      "type": "text/plain",
+      "url": "https://www.markmew.com/llms.txt",
+      "representativeQueries": [
+        "Find the main topics covered by this technical blog",
+        "Which articles explain AWS and Kubernetes operations?",
+        "Where can I find the site's machine-readable content guide?"
+      ]
+    },
+    {
+      "identifier": "urn:air:www.markmew.com:content:sitemap",
+      "displayName": "雲端魔法師 site URL index",
+      "type": "application/xml",
+      "url": "https://www.markmew.com/sitemap.xml",
+      "representativeQueries": [
+        "Find all pages and posts published on this site",
+        "Find the latest articles available on this blog",
+        "Which URLs are available for this website?"
+      ]
+    },
+    {
+      "identifier": "urn:air:www.markmew.com:content:feed",
+      "displayName": "雲端魔法師 RSS feed",
+      "type": "application/rss+xml",
+      "url": "https://www.markmew.com/feed.xml",
+      "representativeQueries": [
+        "Find recently published articles from this blog",
+        "What are the latest updates on this site?",
+        "Subscribe to new posts from 雲端魔法師"
+      ]
+    }
+  ]
+}
