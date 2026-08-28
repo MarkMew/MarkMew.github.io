@@ -1,26 +1,62 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Run Jekyll Server",
-      "type": "shell",
-      "command": "./tools/run.sh",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "problemMatcher": [],
-      "detail": "Runs the Jekyll server with live reload."
-    },
-    {
-      "label": "Build Jekyll Site",
-      "type": "shell",
-      "command": "./tools/test.sh",
-      "group": {
-        "kind": "build"
-      },
-      "problemMatcher": [],
-      "detail": "Build the Jekyll site for production."
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Jekyll Server",
+			"type": "shell",
+			"command": "./tools/run.sh",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"detail": "Runs the Jekyll server with live reload."
+		},
+		{
+			"label": "Build Jekyll Site",
+			"type": "shell",
+			"command": "./tools/test.sh",
+			"group": {
+				"kind": "build"
+			},
+			"problemMatcher": [],
+			"detail": "Build the Jekyll site for production."
+		},
+		{
+			"label": "Compute Skill Digests",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"(Get-FileHash '.well-known/agent-skills/rds-database-research/SKILL.md' -Algorithm SHA256).Hash.ToLower(); (Get-FileHash '.well-known/agent-skills/systems-manager-research/SKILL.md' -Algorithm SHA256).Hash.ToLower()\"",
+			"group": "build"
+		},
+		{
+			"label": "Write Skill Digests To File",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"$r=(Get-FileHash '.well-known/agent-skills/rds-database-research/SKILL.md' -Algorithm SHA256).Hash.ToLower(); $s=(Get-FileHash '.well-known/agent-skills/systems-manager-research/SKILL.md' -Algorithm SHA256).Hash.ToLower(); \\\"rds=$r`nsm=$s\\\" | Out-File -Encoding ascii .well-known/agent-skills/_digest_tmp.txt\"",
+			"group": "build"
+		},
+		{
+			"label": "Write RDS Digest",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"(Get-FileHash '.well-known/agent-skills/rds-database-research/SKILL.md' -Algorithm SHA256).Hash.ToLower() | Set-Content -Encoding ascii .well-known/agent-skills/_digest_rds.txt\"",
+			"group": "build"
+		},
+		{
+			"label": "Write Systems Manager Digest",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"(Get-FileHash '.well-known/agent-skills/systems-manager-research/SKILL.md' -Algorithm SHA256).Hash.ToLower() | Set-Content -Encoding ascii .well-known/agent-skills/_digest_sm.txt\"",
+			"group": "build"
+		},
+		{
+			"label": "Remove Temp Digest Files",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"Remove-Item -Force -ErrorAction SilentlyContinue '.well-known/agent-skills/_digest_rds.txt','.well-known/agent-skills/_digest_sm.txt'\"",
+			"group": "build"
+		},
+		{
+			"label": "Remove Remaining Temp File",
+			"type": "shell",
+			"command": "powershell -NoProfile -Command \"Remove-Item -Force -ErrorAction SilentlyContinue '.well-known/agent-skills/_digest_tmp.txt'\"",
+			"group": "build"
+		}
+	]
 }

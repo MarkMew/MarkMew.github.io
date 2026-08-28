@@ -7,6 +7,20 @@
       "description": "Research AWS, Kubernetes, DevOps, CI/CD, observability, databases, Linux, and AI-era content governance using the Mark Mew technical blog.",
       "url": "https://www.markmew.com/.well-known/agent-skills/cloud-infrastructure-research/SKILL.md",
       "digest": "sha256:b8f47fb5b91c69bb96c5e8cb866e6e01f13ee03ae7f98e2b3a4f6a3f0e8d4c2b"
+    },
+    {
+      "name": "rds-database-research",
+      "type": "skill-md",
+      "description": "Research RDS and database platform tradeoffs, including RDS SQL Server setup, RDS Proxy, primary key design, and self-hosted database comparisons.",
+      "url": "https://www.markmew.com/.well-known/agent-skills/rds-database-research/SKILL.md",
+      "digest": "sha256:9cfc04ad6dea840749c2228a7246b2b4beefafee28e5cd6367cd730241e7beba"
+    },
+    {
+      "name": "systems-manager-research",
+      "type": "skill-md",
+      "description": "Research AWS Systems Manager operations covering Session Manager, Patch Manager, Run Command, State Manager, Inventory, and Parameter Store.",
+      "url": "https://www.markmew.com/.well-known/agent-skills/systems-manager-research/SKILL.md",
+      "digest": "sha256:742d8ca674f332c31bf8a5bd5f47bdd6ae61f4693474ca5721624f8e582ef3b2"
     }
   ]
 }
