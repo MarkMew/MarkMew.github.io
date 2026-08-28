@@ -37,6 +37,17 @@
         "What are the latest updates on this site?",
         "Subscribe to new posts from 雲端魔法師"
       ]
+    },
+    {
+      "identifier": "urn:air:www.markmew.com:skills:agent-skills-index",
+      "displayName": "雲端魔法師 agent skills index",
+      "type": "application/json",
+      "url": "https://www.markmew.com/.well-known/agent-skills/index.json",
+      "representativeQueries": [
+        "What agent skills does this site publish?",
+        "Find reusable research skills for AWS and Kubernetes topics",
+        "How should an agent research this technical blog's content?"
+      ]
     }
   ]
 }
