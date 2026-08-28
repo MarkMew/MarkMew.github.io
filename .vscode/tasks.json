@@ -57,6 +57,24 @@
 			"type": "shell",
 			"command": "powershell -NoProfile -Command \"Remove-Item -Force -ErrorAction SilentlyContinue '.well-known/agent-skills/_digest_tmp.txt'\"",
 			"group": "build"
+		},
+		{
+			"label": "Check Git Status",
+			"type": "shell",
+			"command": "git status --short && git log --oneline -5 && git rev-parse --abbrev-ref HEAD",
+			"group": "build"
+		},
+		{
+			"label": "Check Git Status v2",
+			"type": "shell",
+			"command": "git status --short; git log --oneline -5; git rev-parse --abbrev-ref HEAD",
+			"group": "build"
+		},
+		{
+			"label": "Check GitHub Actions Runs",
+			"type": "shell",
+			"command": "gh run list --limit 5",
+			"group": "build"
 		}
 	]
 }

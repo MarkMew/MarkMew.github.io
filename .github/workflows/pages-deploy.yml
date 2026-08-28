@@ -72,6 +72,8 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: "_site${{ steps.pages.outputs.base_path }}"
+          # required so .well-known (dotfiles) survive the artifact upload
+          include-hidden-files: true
 
   deploy:
     environment:
