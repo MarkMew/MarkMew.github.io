@@ -3,5 +3,6 @@ main = "markdown-for-agents-worker.js"
 compatibility_date = "2024-09-23"
 
 routes = [
-  { pattern = "www.markmew.com/posts/*", zone_name = "markmew.com" }
+  { pattern = "www.markmew.com/posts/*", zone_name = "markmew.com" },
+  { pattern = "www.markmew.com/", zone_name = "markmew.com" }
 ]
