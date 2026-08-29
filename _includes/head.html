@@ -30,6 +30,10 @@
     <meta name="keywords" content="{{ page.keywords | join: ', ' | escape }}">
   {% endif %}
 
+  {% if page.layout == 'post' %}
+    <link rel="alternate" type="text/markdown" href="{{ page.url | append: 'index.md' | relative_url }}">
+  {% endif %}
+
   <!-- Setup Open Graph image -->
 
   {% if page.image %}

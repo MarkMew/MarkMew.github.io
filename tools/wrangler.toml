@@ -1,0 +1,7 @@
+name = "markdown-for-agents-worker"
+main = "markdown-for-agents-worker.js"
+compatibility_date = "2026-08-30"
+
+routes = [
+  { pattern = "www.markmew.com/posts/*", zone_name = "markmew.com" }
+]
