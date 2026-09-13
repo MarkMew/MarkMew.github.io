@@ -4,8 +4,8 @@ title: "EKS Secrets Store CSI の同期問題：syncSecret.enabled を有効に�
 image: https://fastly.picsum.photos/id/640/1200/630.jpg?hmac=CKdVQUIpKChIXGzl64-BK3Q6687VM9yIB4PZzYcL_Rw
 description: "AWS Secrets Manager と Secrets Store CSI Driver の連携で、SecretProviderClass は存在するのに Kubernetes Secret が同期されない問題を、Helm の syncSecret.enabled 設定を更新して解決した記録です。"
 author: Mark_Mew
-categories: [AWS, K8S]
-tags: [EKS, Secrets Manager, Secrets Store CSI Driver, Helm]
+categories: [K8S]
+tags: [EKS, K8S, Secrets Manager, Secrets Store CSI Driver, Helm]
 keywords: [AWS Secrets Manager, Secrets Store CSI Driver, SecretProviderClass, syncSecret.enabled, Kubernetes Secret 同期, secret not found]
 lang: ja
 mermaid: true

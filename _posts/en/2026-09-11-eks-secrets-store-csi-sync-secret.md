@@ -4,8 +4,8 @@ title: "Fixing Secrets Store CSI Sync on EKS: Enable syncSecret.enabled to Creat
 image: https://fastly.picsum.photos/id/640/1200/630.jpg?hmac=CKdVQUIpKChIXGzl64-BK3Q6687VM9yIB4PZzYcL_Rw
 description: "Troubleshooting missing Kubernetes Secrets when using AWS Secrets Manager with the Secrets Store CSI Driver, and resolving the issue by enabling the syncSecret.enabled Helm setting."
 author: Mark_Mew
-categories: [AWS, K8S]
-tags: [EKS, Secrets Manager, Secrets Store CSI Driver, Helm]
+categories: [K8S]
+tags: [EKS, K8S, Secrets Manager, Secrets Store CSI Driver, Helm]
 keywords: [AWS Secrets Manager, Secrets Store CSI Driver, SecretProviderClass, syncSecret.enabled, Kubernetes Secret sync, secret not found]
 lang: en
 mermaid: true
