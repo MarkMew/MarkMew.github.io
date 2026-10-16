@@ -30,11 +30,7 @@
     {% assign original_url = page.url | absolute_url %}
     {% assign localized_path = page.url | prepend: lang | prepend: '/' %}
     {% assign localized_url = localized_path | absolute_url %}
-    {% assign original_canonical = 'href="' | append: original_url | append: '"' %}
-    {% assign localized_canonical = 'href="' | append: localized_url | append: '"' %}
-    {% assign original_og_url = 'content="' | append: original_url | append: '"' %}
-    {% assign localized_og_url = 'content="' | append: localized_url | append: '"' %}
-    {% assign seo_tags = seo_tags | replace: original_canonical, localized_canonical | replace: original_og_url, localized_og_url %}
+    {% assign seo_tags = seo_tags | replace: original_url, localized_url %}
   {% endif %}
 
   {% if page.keywords %}
