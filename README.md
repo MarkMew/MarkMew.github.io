@@ -38,6 +38,14 @@ The `_headers` file declares RFC 8288 `Link` response headers for the homepage:
 
 This repository deploys through GitHub Pages, which does not process `_headers`. To make these headers available on the live custom domain, apply the same rules in Cloudflare using a Transform Rule or Worker on the proxied domain. The generated HTML `<link>` metadata cannot substitute for HTTP response headers.
 
+## Markdown for Agents
+
+For Markdown responses on every HTML page, enable **Markdown for Agents** in the Cloudflare dashboard under **AI Crawl Control** for `markmew.com`. This requires an eligible Cloudflare plan and a proxied hostname. Browsers continue to receive HTML; clients requesting `Accept: text/markdown` receive `Content-Type: text/markdown` with `Vary: Accept`.
+
+As an alternative for the homepage and posts, deploy the existing Worker with `npx wrangler deploy --config tools/wrangler.toml`. The Jekyll build creates adjacent `index.md` files and the Worker serves them for Markdown requests on `/`, `/en/`, `/ja/`, and their post URLs. Do not enable both approaches on the same routes.
+
+After enabling either approach, verify a post in each language with `curl -i -H "Accept: text/markdown" https://www.markmew.com/en/posts/string-reversed/` and verify the same URL with `Accept: text/html` still returns HTML. The `x-markdown-tokens` header is optional; the Worker does not estimate a token count.
+
 ## Multilingual posts (minimal setup)
 
 This site is configured with `jekyll-polyglot` and supports `zh-TW`, `en`, `ja`.
