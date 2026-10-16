@@ -26,6 +26,17 @@
   {%- capture localized_og_locale_tag -%}<meta property="og:locale" content="{{ localized_og_locale }}" />{%- endcapture -%}
   {% assign seo_tags = seo_tags | replace: default_og_locale_tag, localized_og_locale_tag %}
 
+  {% if page.layout == 'post' and lang != site.default_lang %}
+    {% assign original_url = page.url | absolute_url %}
+    {% assign localized_path = page.url | prepend: lang | prepend: '/' %}
+    {% assign localized_url = localized_path | absolute_url %}
+    {% assign original_canonical = 'href="' | append: original_url | append: '"' %}
+    {% assign localized_canonical = 'href="' | append: localized_url | append: '"' %}
+    {% assign original_og_url = 'content="' | append: original_url | append: '"' %}
+    {% assign localized_og_url = 'content="' | append: localized_url | append: '"' %}
+    {% assign seo_tags = seo_tags | replace: original_canonical, localized_canonical | replace: original_og_url, localized_og_url %}
+  {% endif %}
+
   {% if page.keywords %}
     <meta name="keywords" content="{{ page.keywords | join: ', ' | escape }}">
   {% endif %}
