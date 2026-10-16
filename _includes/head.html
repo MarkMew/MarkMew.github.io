@@ -38,6 +38,17 @@
   {% endif %}
 
   {% if page.layout == 'post' %}
+    {% assign translated_langs = site.data.post_translations[page.url] %}
+    {% for alternate_lang in site.languages %}
+      {% if translated_langs contains alternate_lang %}
+        {% if alternate_lang == site.default_lang %}
+          {% assign alternate_path = page.url %}
+        {% else %}
+          {% assign alternate_path = page.url | prepend: alternate_lang | prepend: '/' %}
+        {% endif %}
+        <link rel="alternate" hreflang="{{ alternate_lang }}" href="{{ alternate_path | absolute_url }}">
+      {% endif %}
+    {% endfor %}
     <link rel="alternate" type="text/markdown" href="{{ page.url | append: 'index.md' | relative_url }}">
   {% endif %}
 
