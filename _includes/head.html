@@ -31,7 +31,7 @@
     {% assign seo_tags = seo_tags | replace: page.description, site.data.locales.en.site.about_description %}
   {% endif %}
 
-  {% if page.layout == 'post' or page.url == '/about/' %}
+  {% if page.layout == 'post' or page.layout == 'categories' or page.layout == 'category' or page.url == '/about/' %}
     {% assign localize_seo_url = true %}
   {% endif %}
   {% if localize_seo_url and lang != site.default_lang %}

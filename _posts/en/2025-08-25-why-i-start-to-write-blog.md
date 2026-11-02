@@ -3,7 +3,7 @@ layout: post
 
 description: "Why I Started Writing Tech Articles. Practical steps, common pitfalls, and commands you can apply quickly."
 author: Mark_Mew
-category: ??
+category: Opinion
 date: 2025-8-25
 lang: en
 ---
