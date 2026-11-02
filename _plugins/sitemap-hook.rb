@@ -137,7 +137,6 @@ Jekyll::Hooks.register :site, :post_write do |site|
   
   # Generate XML
   sitemap_xml = %(<?xml version="1.0" encoding="UTF-8"?>\n)
-  sitemap_xml += %(<?xml-stylesheet type="text/xsl" href="/sitemap.xsl"?>\n)
   sitemap_xml += %(<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n)
   
   sitemap_urls.each do |entry|

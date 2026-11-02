@@ -67,7 +67,8 @@ main() {
   cp robots.txt "$SITE_DIR$_baseurl/robots.txt"
   grep -q '^Content-Signal: ai-train=no, search=yes, ai-input=yes$' "$SITE_DIR$_baseurl/robots.txt"
 
-  ruby tools/beautify_sitemap.rb "$SITE_DIR$_baseurl"
+  ruby tools/generate_sitemap.rb "$SITE_DIR$_baseurl"
+  ruby tools/check_sitemap.rb "$SITE_DIR$_baseurl"
 
   # test
   bundle exec htmlproofer "$SITE_DIR" \
