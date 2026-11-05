@@ -1,28 +1,18 @@
 ---
 layout: post
 title: EKS での cronjob 実行エラーによってワーカーノードの自動拡張が失敗するのを防ぐ方法
-description: "EKS での cronjob 実行エラーによってワーカーノードの自動拡張が失敗するのを防ぐ方法. Practical notes and implementation steps."
+description: "EKS のバックアップ CronJob が失敗し、ノードのスケールアウトも遅れた事例。Job の失敗原因、Pending Pod のイベント、オートスケーラーのログを切り分ける。"
 author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]
 date: 2026-3-8
+last_modified_at: 2026-11-05
 lang: ja
 ---
 
-最近、EKSにサービスを提供しているとき
+EKS の運用中、バックアップ用 CronJob の失敗が続き、同時期に Pod が Pending のまま残り、ノードのスケールアウトも遅れました。ただし、CronJob の失敗だけでオートスケーラーへの影響を断定することはできません。Job のエラー、Pending Pod のイベント、オートスケーラーのログを分けて確認します。
 
-何かが起こりました。
-
-cronjob の実行の多くが失敗するからです。
-
-Worker Node を新しいデプロイメントを作成せずに自動的にスケーリングするようにします。
-
-この問題の可能性には複数のレベルがあります。
-
-1.ワーカーノード自動拡張戦略の解決
-2.Cronjob の実行に失敗すると、ポッドが大量に再起動し、API Server と kube-scheduler のパフォーマンスに影響が及びます。
-
-以下は問題を書くための cronjob です。
+以下は当時のバックアップ Job を簡略化した例です。実行時のパッケージ導入や Job の再試行設定を確認する必要がありますが、このマニフェストだけでスケールアウト失敗の原因は特定できません。
 ```yaml
 apiVersion: batch/v1
 kind: CronJob
@@ -180,28 +170,20 @@ spec:
           restartPolicy: OnFailure
 ```
 
-> コンテナの実行に `apk add--no-cache aws-cli` を追加するのは良い考えではありませんが、
-> 少なくとも 1 人は InitContainer ブロックを入れたいと思っています。
-> 準備段階で、必要なパッケージを梱包し、
-> もちろん、一番いい方法は自分で容器を詰めることです。
+> 毎回 `apk add --no-cache aws-cli` を実行すると、パッケージ取得の失敗や起動時間の増加につながります。必要なツールは事前にコンテナイメージへ組み込んでください。
 {: .prompt-warning}
 
-この例と改善の方向性はベストプラクティスではありません
+## 切り分けの手順
 
-ソースはまだエラーのあるプログラムの修正を望んでいます。
+1. `kubectl describe cronjob database-backup -n operating` と `kubectl get jobs,pods -n operating` で最近の Job を確認します。
+2. 失敗した Pod のイベントとログを確認し、コンテナの起動、`pg_dump`、S3 へのアップロードのどこで失敗したかを調べます。
+3. Pending Pod は別に `kubectl describe pod <pod-name> -n operating` で確認します。リソース不足と、起動後のコンテナエラーは異なる問題です。
+4. オートスケーラーのログとノードグループの上限を確認してから、スケールアウト失敗の原因を判断します。
 
-改善の方向性だけではない。
+必要に応じて CronJob の `concurrencyPolicy`、`startingDeadlineSeconds`、Job の再試行設定を見直します。これらは実行タイミングと再試行を制御するもので、バックアップ処理そのもののエラーは修正できません。
 
-しかし、今回はそこが議論のテーマではありません。
-
-今後、次の方法で別の説明を書く予定です。
-
-* 構文とスキーマの検証
-``bash
-kubeconform -summary -strict my-cronjob.yaml
+```bash
+kubectl apply --dry-run=server -f my-cronjob.yaml
 ```
-* キューブスコアやキューブリンターなどの SAST ツールで確認する
-*「ドライラン」の実行をシミュレート
-```
-kubectl apply -f my-cronjob.yaml --dry-run=server
-```
+
+各設定の動作は [Kubernetes の CronJob ドキュメント](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)を参照してください。

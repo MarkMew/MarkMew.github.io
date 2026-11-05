@@ -1,11 +1,12 @@
 ---
 layout: post
 title: EC2 中的 Container 無法透過 iam profile role 獲取相對應的權限
-description: "EC2 中的 Container 無法透過 iam profile role 獲取相對應的權限. Practical notes and implementation steps."
+description: "EC2 上的容器無法取得執行個體設定檔憑證時，檢查 IMDSv2 Token 請求、Metadata 端點與回應的 hop limit。"
 author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]
 date: 2026-3-11
+last_modified_at: 2026-11-05
 ---
 
 在操作 EC2 裡面要操作 AWS 的資源的時候，

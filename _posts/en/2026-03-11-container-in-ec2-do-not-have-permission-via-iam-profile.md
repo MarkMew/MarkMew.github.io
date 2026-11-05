@@ -1,11 +1,13 @@
 ---
 layout: post
+title: "Why an EC2 Container Cannot Reach Instance Profile Credentials with IMDSv2"
 
-description: "Containers in EC2 Cannot Obtain Expected Permissions via IAM Instance Profile Role. Practical steps, common pitfalls, and commands you can apply quickly."
+description: "Diagnose missing instance profile credentials in a container on EC2 by checking IMDSv2 token access and the metadata response hop limit."
 author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]
 date: 2026-3-11
+last_modified_at: 2026-11-05
 lang: en
 ---
 
@@ -180,13 +182,13 @@ no credentials found
 
 There is more than one possible solution:
 
-1. Change IMDSv2 to Optional (not recommended)
-2. Increase hop limit
-3. Inject IAM user credentials as environment variables at GitLab CI Runner runtime (acceptable)
+1. Keep IMDSv2 required. If containers need instance metadata, set the metadata response hop limit to `2`, then test the token request from inside the container. AWS recommends this setting for container environments.
+2. Check that the container can reach `169.254.169.254` and that its AWS SDK supports IMDSv2. If the token request succeeds but credentials still fail, inspect the instance profile and IAM permissions separately.
+3. For workloads that should not share the host instance profile, use a workload-specific role or another short-lived credential mechanism appropriate to the platform. Do not put long-lived IAM user access keys in the runner environment as a workaround.
 
 
 References
 ---
 1. [IAM roles for Amazon EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html)
 
-2. [Configure instance metadata options for new instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-IMDS-new-instances.html?utm_source=chatgpt.com)
+2. [Configure instance metadata options for new instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-IMDS-new-instances.html)

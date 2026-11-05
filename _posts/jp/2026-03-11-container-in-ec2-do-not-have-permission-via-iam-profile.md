@@ -1,11 +1,12 @@
 ---
 layout: post
 title: EC2 上のコンテナが IAM Instance Profile Role 経由で必要な権限を取得できない
-description: "EC2 上のコンテナが IAM Instance Profile Role 経由で必要な権限を取得できない. Practical notes and implementation steps."
+description: "EC2 上のコンテナでインスタンスプロファイルの認証情報を取得できない場合に、IMDSv2 のトークン取得とメタデータ応答のホップ制限を確認する。"
 author: Mark_Mew
 category: AWS
 tags: [AWS, EC2]
 date: 2026-3-11
+last_modified_at: 2026-11-05
 lang: ja
 ---
 
@@ -180,13 +181,13 @@ no credentials found
 
 解決策は 1 つではありません：
 
-1. IMDSv2 を Optional に戻す（非推奨）
-2. hop limit を増やす
-3. IAM User Credentials を Environment Variable として注入し、GitLab CI Runner 実行時に渡す（妥協案）
+1. IMDSv2 は必須のままにし、コンテナからメタデータが必要な場合は応答の hop limit を `2` に設定します。コンテナ内からトークンを取得できるか確認してください。
+2. `169.254.169.254` への到達性と AWS SDK の IMDSv2 対応を確認します。トークンを取得できても認証に失敗する場合は、インスタンスプロファイルと IAM 権限を別に調べます。
+3. ホストのインスタンスプロファイルを共有すべきでないワークロードでは、環境に適した短期認証情報を使います。長期 IAM ユーザーキーを環境変数へ入れる方法は避けてください。
 
 
 参考資料
 ---
 1. [IAM roles for Amazon EC2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html)
 
-2. [Configure instance metadata options for new instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-IMDS-new-instances.html?utm_source=chatgpt.com)
+2. [Configure instance metadata options for new instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-IMDS-new-instances.html)

@@ -1,28 +1,19 @@
 ---
 layout: post
+title: "Investigating CronJob Failures and Delayed EKS Node Scaling"
 
-description: "How to prevent cronjob execution failure on EKS from causing Worker Node auto-extension failure. Practical steps, common pitfalls, and commands you can apply quickly."
+description: "A failed EKS backup CronJob coincided with delayed node scaling. Review Job failures, pending Pod events, autoscaler logs, and the CronJob manifest before deciding where to fix the problem."
 author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]
 date: 2026-3-8
+last_modified_at: 2026-11-05
 lang: en
 ---
 
-Recently when servicing EKS
+During EKS operations, repeated backup CronJob failures coincided with Pods waiting for capacity and delayed node scaling. These symptoms appeared together, but a failed CronJob alone does not prove that it prevented the cluster autoscaler from adding nodes. Check the Job failures, Pending Pod events, and autoscaler logs before assigning a cause.
 
-Something happened
-
-Because a lot of cronjob execution fails
-
-Causes Worker Node to automatically scale without creating new deployments
-
-There are multiple levels of possibility of this problem
-
-1. Resolve Worker Node Auto Expansion Strategies
-2. Cronjob execution failure results in massive Pod reboots impacting performance of API Server and kube-scheduler
-
-Here is a cronjob for writing a problem
+The manifest below is a simplified version of the backup Job. It installs a package at runtime and has no explicit limits on Job retries or concurrent schedules. Those choices deserve review, but the manifest alone does not establish why scaling failed.
 ```yaml
 apiVersion: batch/v1
 kind: CronJob
@@ -186,22 +177,19 @@ spec:
 > Of course, the best way is to pack a container yourself.
 {: .prompt-warning}
 
-This example and the direction of improvement is not the best practice
+## How to investigate
 
-The source still wants to fix a program that has errors
+1. Inspect the CronJob and its recent Jobs: `kubectl describe cronjob database-backup -n operating` and `kubectl get jobs,pods -n operating`.
+2. Read the failed Pod's events and logs with `kubectl describe pod <pod-name> -n operating` and `kubectl logs <pod-name> -n operating`. Check whether the container started, whether `pg_dump` failed, and whether the S3 upload failed.
+3. For a Pod stuck in `Pending`, inspect its events separately. A scheduling failure due to insufficient resources is different from a container that started and then exited with an error.
+4. Inspect the autoscaler's logs and node group limits before claiming a scaling failure. A Pod may also be unschedulable for reasons that adding a node cannot fix.
 
-The direction of improvement is not the only one
+Review `.spec.concurrencyPolicy`, `.spec.startingDeadlineSeconds`, and Job retry settings for the intended backup behavior. These controls manage scheduling and retries; they are not a substitute for fixing the backup command. Build a container image with the required tools instead of installing `aws-cli` on every run.
 
-But that's not the topic of discussion this time.
+Validate changes before deployment:
 
-In the future, we will write another description in the following way.
-
-* Syntax and Schema Validation
-``bash
-cubeconform -summary -strict my-cronjob.yaml
+```bash
+kubectl apply --dry-run=server -f my-cronjob.yaml
 ```
-* Check with SAST tools such as kube-score or Kube-Linter
-* Simulate running `Dry Run`
-```
-kubectl apply -f my-cronjob.yaml --dry-run=server
-```
+
+See the [Kubernetes CronJob documentation](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) for the exact behavior of these fields.

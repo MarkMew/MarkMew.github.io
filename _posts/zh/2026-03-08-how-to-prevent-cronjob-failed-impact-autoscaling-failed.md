@@ -1,11 +1,12 @@
 ---
 layout: post
 title: 如何避免 EKS 上 的 cronjob 執行失敗導致 Worker Node 自動擴展失敗
-description: "如何避免 EKS 上 的 cronjob 執行失敗導致 Worker Node 自動擴展失敗. Practical notes and implementation steps."
+description: "EKS 備份 CronJob 執行失敗，同時遇到節點擴展延遲時，先比對 Job 錯誤、Pending Pod 事件與自動擴展器日誌，再判斷故障原因。"
 author: Mark_Mew
 category: K8S
 tags: [EKS, K8S]
 date: 2026-3-8
+last_modified_at: 2026-11-05
 ---
 
 最近在維運 EKS 時
