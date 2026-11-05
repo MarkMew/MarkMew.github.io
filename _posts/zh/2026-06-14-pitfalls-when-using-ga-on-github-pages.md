@@ -1,24 +1,19 @@
 ---
 layout: post
 title: "GitHub Pages 使用 Google Search Console 提交網站地圖踩雷記"
-description: "記錄在 GitHub Pages 使用 Google Search Console 提交 sitemap 時遇到無法擷取的問題，以及透過自定義網域、CloudFlare DNS 和 GitHub Pages 設定解決索引問題的過程。"
+description: "記錄 GitHub Pages 網站地圖曾在 Search Console 顯示無法擷取，以及變更網域前應檢查的網址、HTTP 回應、robots.txt 與重新導向。"
 author: Mark_Mew
 categories: [GitHub]
 tags: [GitHub, GitHub Pages, Google Search Console, SEO]
 keywords: [GitHub, GitHub Pages, Google Search Console, SEO]
 lang: zh-TW
 date: 2026-06-14
+last_modified_at: 2026-11-05
 ---
 
-先說結論，
+這篇記錄我把 GitHub Pages 網站改用自訂網域前後，Search Console 擷取 sitemap 的狀況。設定網域後，sitemap 最終成功擷取；但僅憑時間先後，無法證明自訂網域是必要條件，也無法證明它會加快文章收錄。使用 `github.io` 網址的網站同樣可以提交 sitemap。
 
-如果沒有 Customized Doamin 的話，
-
-無論怎麼提交網站地圖給 Google Search Console 都不會被採用，
-
-如果想要讓靜態網站託管快點被 Google 建立索引，
-
-買個網域並綁定在 GitHub Pages 上才是解決之道。
+如果 Search Console 顯示「無法擷取」，應先核對 sitemap 網址、HTTP 回應、robots.txt、重新導向與提交的資源類型。Google 列出的可能原因見 [Search Console 網站地圖報表說明](https://support.google.com/webmasters/answer/7451001)。
 
 ## 踩雷過程
 
@@ -115,54 +110,11 @@ Google Search Console 則是因為 Google Analytics 可以直接關聯，
 </urlset>
 ```
 
-#### `GitHub Pages` 的信任度
+#### 這次能確認的範圍
 
-👉 Google 對 GitHub Pages：
-- crawl 頻率低
-- trust 比較低
-- 很多垃圾站在上面
+本機檢查顯示 sitemap XML 格式正確；變更網域後，提交也成功了。但我沒有證據顯示 Google 降低 `github.io` 網站的信任度，或某個 CDN 節點造成擷取失敗。這些推測不能當成這次問題的原因。
 
-👉 結果：同樣 sitemap，GitHub 站比較容易被 delay / fail
-
-在和 AI 互動的過程中，
-
-AI 工具提了一個有趣的觀點，
-
-在沒有自定義網域前，
-
-網域都會是 `GitHub名稱`.github.io，
-
-統一都會是 github.io 結尾，
-
-信任度和優先序是不是這麼高就有待商榷。
-
-#### `GitHub Pages` 的穩定性問題
-
-💥 關鍵：GitHub Pages + Googlebot 的老問題
-
-GitHub Pages 有這些特性：
-- CDN（Fastly）
-- cache layer
-- edge node 分散
-
-👉 你 curl 打到的是：
-
-X-Served-By: cache-nrt-xxxx (日本節點)
-
-👉 但 Googlebot：
-
-可能從美國 / 歐洲抓
-可能打到不同節點
-
-網域信任度以外，
-
-CDN 的穩定性或是跨國擷取穩定性也是一個可能（我是不相信啦），
-
-但是從產生方式一直到上層都處理過後，
-
-我解決方是真的就只剩下一個，
-
-就是購買網域並綁定。
+本機 `curl` 成功，也不代表重現了 Google 的所有請求。變更主機或 DNS 前，應先看 Search Console 的錯誤細節和實際的 HTTP 回應。
 
 ## 解決過程
 
@@ -261,16 +213,4 @@ Sitemap 提交成功後，
 
 回顧整個過程，我花了不少時間在檢查 sitemap、robot.txt 以及各種設定，
 
-卻發現最關鍵的一步其實很簡單——購買一個自定義網域並綁定。
-
-對於 GitHub Pages 這樣的免費服務，
-
-Google Search Console 可能對 `github.io` 結尾的域名信任度較低，
-
-因此無論 sitemap 多麼完美也難以被採用。
-
-重點是：**有自定義網域 = 可以提交 sitemap = 快速被索引**。
-
-如果你也遇到相同問題，直接購買網域是最直接的解決方案，
-
-省下來的時間和精力遠比網域費用更值得。
+在我的網站上，設定自訂網域後 sitemap 成功擷取，但現有紀錄不足以確認是哪項變更排除了原本的錯誤。自訂網域並非提交 sitemap 的必要條件，提交成功也不保證建立索引。遇到「無法擷取」時，先檢查報表中的錯誤與 sitemap 的實際回應。

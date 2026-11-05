@@ -9,18 +9,13 @@ date: 2026-3-11
 last_modified_at: 2026-11-05
 ---
 
-在操作 EC2 裡面要操作 AWS 的資源的時候，
-
-我們都知道最佳實踐是綁定 IAM Profile Role 並關聯最小權限去操作。
-
-因為實際上 EC2 底層在運行的時候，
-
-會塞一個憑證在底層，
-
-需要使用以下指令呼叫才能夠獲取。
+在 EC2 上執行需要存取 AWS 資源的程式時，可以為執行個體指派具備最小權限的 IAM Role。EC2 會透過 Instance Metadata Service（IMDS）提供暫時憑證。若要求使用 IMDSv2，必須先取得 Token，再查詢 Metadata：
 
 ```bash
-curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+TOKEN=$(curl -fsS -X PUT http://169.254.169.254/latest/api/token \
+  -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
+curl -fsS -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/iam/security-credentials/
 ```
 
 順利的話應該會出現
@@ -29,7 +24,7 @@ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
 <IAM Profile Name>
 ```
 
-不過如果調整一個 EC2 上的 feature - IMDSv2，
+不過若將 IMDSv2 設為必須使用，
 
 就有可能讓 EC2 中的 Container 無法順利獲取權限。
 
@@ -183,7 +178,7 @@ no credentials found
 
 1. IMDSv2 改為 Optional（不建議）
 2. 增加 hop limit
-3. 將 IAM User Credentails 注入在 Environment Variable 中，Gitlab CI Runner 在執行時注入（尚可）
+3. 如果工作負載不應共用主機的 Instance Profile，改用適合該平台的短期憑證機制；不要把長期 IAM User Access Key 放進 Runner 的環境變數當作替代方案。
 
 
 參考資料

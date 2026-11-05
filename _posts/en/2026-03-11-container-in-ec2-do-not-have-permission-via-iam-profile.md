@@ -15,12 +15,13 @@ When you need to access AWS resources from workloads running on EC2,
 
 we all know the best practice is to attach an IAM Instance Profile Role with least privilege.
 
-Under the hood, EC2 provides credentials through the metadata service,
-
-and you can retrieve them with the following command:
+EC2 exposes temporary instance profile credentials through the Instance Metadata Service (IMDS). When IMDSv2 is required, first request a token and then use it for the metadata request:
 
 ```bash
-curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+TOKEN=$(curl -fsS -X PUT http://169.254.169.254/latest/api/token \
+  -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
+curl -fsS -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/iam/security-credentials/
 ```
 
 If everything works correctly, you should see:
@@ -29,7 +30,7 @@ If everything works correctly, you should see:
 <IAM Profile Name>
 ```
 
-However, after enabling an EC2 feature ??IMDSv2,
+However, after requiring IMDSv2,
 
 a container running inside EC2 may fail to obtain credentials.
 
@@ -94,12 +95,9 @@ Exactly. When running Docker on EC2, there are other possible causes as well.
     But from a Docker container to metadata, there is usually one extra network hop:
     ```
     container
-        ??
-    docker bridge
-        ??
-    EC2 instance network
-        ??
-    169.254.169.254
+        -> docker bridge
+        -> EC2 instance network
+        -> 169.254.169.254
     ```
 
     So when hop=1, the token response cannot return to the container.
@@ -122,9 +120,7 @@ Exactly. When running Docker on EC2, there are other possible causes as well.
 
 3. Docker network policy / iptables
 
-    I? not very familiar with this part yet.
-
-    I may come back and add details in the future.
+    If the IMDSv2 token request still fails after checking the hop limit, inspect container networking and any firewall rules that might block `169.254.169.254`.
 
 ---
 
@@ -135,25 +131,13 @@ while setting up a GitLab CI Runner on EC2.
 In the pipeline, container network flow looked like this:
 
 ```
-container
-   ??
-docker bridge (docker0)
-   ??
-host network
-   ??
-IMDS
+container -> docker bridge (docker0) -> host network -> IMDS
 ```
 
 When the token response came back:
 
 ```
-IMDS
- ??
-host network
- ??
-docker bridge
- ??
-container
+IMDS -> host network -> docker bridge -> container
 ```
 
 The actual hop count could become:

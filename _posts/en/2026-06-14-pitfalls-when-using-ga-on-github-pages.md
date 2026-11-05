@@ -1,26 +1,19 @@
 ---
 layout: post
 title: "Pitfalls When Submitting a Sitemap from GitHub Pages to Google Search Console"
-description: "A practical note on fixing the 'Couldn't fetch' sitemap issue in Google Search Console for GitHub Pages by using a custom domain, CloudFlare DNS, and GitHub Pages settings."
+description: "A personal account of a GitHub Pages sitemap fetch issue and the checks to make in Search Console before changing DNS or a custom domain."
 author: Mark_Mew
 categories: [GitHub]
 tags: [GitHub, GitHub Pages, Google Search Console, SEO]
 keywords: [GitHub, GitHub Pages, Google Search Console, SEO]
 lang: en
 date: 2026-06-14
+last_modified_at: 2026-11-05
 ---
 
-Let me start with the conclusion.
+This is an account of a sitemap problem I encountered while moving a GitHub Pages site to a custom domain. After the move, Search Console eventually fetched my sitemap. That sequence does not establish that a custom domain is required or that it speeds up indexing. A site on a `github.io` address can submit a sitemap too.
 
-If you do not have a custom domain,
-
-no matter how you submit your sitemap to Google Search Console,
-
-it may simply never be accepted.
-
-If you want your static website to be indexed by Google faster,
-
-buying a domain and binding it to GitHub Pages is the real solution.
+If Search Console reports `Couldn't fetch`, first check the exact sitemap URL, its HTTP response, robots.txt, redirects, and the property you submitted it under. Google lists several possible fetch failures; a domain purchase is not one of its requirements. See the [Search Console sitemaps report help](https://support.google.com/webmasters/answer/7451001).
 
 ## How I Stepped on This Landmine
 
@@ -117,55 +110,11 @@ But in the end, GSC still did not accept it.
 </urlset>
 ```
 
-#### The Trust Level of `GitHub Pages`
+#### What I could and could not verify
 
-👉 How Google may see GitHub Pages:
-- Lower crawl frequency
-- Lower trust
-- Many spammy sites are hosted there
+The sitemap XML was valid in my local checks, and changing the domain coincided with a successful submission. I did not capture evidence that Google treated `github.io` as less trustworthy, or that a particular CDN edge caused the fetch error. Those explanations should not be treated as findings from this case.
 
-👉 Result: with the same sitemap, a GitHub Pages site may be more likely to be delayed or fail.
-
-While discussing the issue with AI,
-
-one interesting point came up.
-
-Before using a custom domain,
-
-the domain is always `GitHubName`.github.io,
-
-and all of them end with github.io.
-
-Whether that domain has high enough trust and priority is honestly debatable.
-
-#### Stability Issues with `GitHub Pages`
-
-💥 Key point: the long-standing GitHub Pages + Googlebot problem
-
-GitHub Pages has these characteristics:
-- CDN (Fastly)
-- Cache layer
-- Distributed edge nodes
-
-👉 When you run curl, you may hit:
-
-X-Served-By: cache-nrt-xxxx (a Japan node)
-
-👉 But Googlebot:
-
-may crawl from the United States or Europe.
-
-It may hit a different node.
-
-Aside from domain trust,
-
-CDN stability or cross-region crawl stability could also be a factor (though I personally do not really buy it).
-
-But after checking everything from sitemap generation to the hosting layer,
-
-there was only one solution left for me:
-
-buy a domain and bind it.
+A local `curl` request also does not reproduce every request Google makes. Use the Sitemaps report and server response details to narrow down an actual fetch failure before changing hosting or DNS.
 
 ## How I Solved It
 
@@ -263,16 +212,4 @@ or even included by AI agents.
 
 Looking back at the whole process, I spent a lot of time checking sitemap, robots.txt, and all kinds of settings.
 
-But the key step turned out to be very simple: buy a custom domain and bind it.
-
-For a free service like GitHub Pages,
-
-Google Search Console may have lower trust in domains ending with `github.io`.
-
-So even a perfect sitemap may still be difficult to submit successfully.
-
-The main point is: **custom domain = sitemap can be submitted = faster indexing**.
-
-If you run into the same issue, buying a domain directly is the most straightforward solution.
-
-The time and energy saved are worth far more than the domain fee.
+In my case, the sitemap became fetchable after I configured a custom domain. The available evidence does not show which change resolved the earlier error. A custom domain is optional for GitHub Pages sitemap submission, and a successful submission does not guarantee indexing. When the report says `Couldn't fetch`, check the reported error and the sitemap response first.

@@ -1,8 +1,10 @@
 ---
 layout: post
+title: "View Logs from Multiple Kubernetes Pods with kubectl"
 
-description: "Kubernetes Pod Logs Guide: Quickly View Logs from Multiple Pods with kubectl. Practical steps, common pitfalls, and commands you can apply quickly."
+description: "Use kubectl logs to inspect a single Pod, a previous container run, or several Pods selected by label; includes streaming and pod-name prefixes."
 date: 2026-03-12
+last_modified_at: 2026-11-05
 categories: [K8S]
 tags: [EKS, K8S]
 lang: en

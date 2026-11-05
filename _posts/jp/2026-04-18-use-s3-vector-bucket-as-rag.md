@@ -1,12 +1,13 @@
 ---
 layout: post
 title: "S3 Vector Bucket 実践: Amazon Nova で最新ランジェリー商品カタログを検索可能なベクトル知識ベースにする"
-description: "S3 Vector Bucket 実践: Amazon Nova で最新ランジェリー商品カタログを検索可能なベクトル知識ベースにする"
+description: "S3 Vectors と Amazon Nova を使い、商品カタログのベクトル化、保存、検索までを実装例で説明します。"
 author: Mark_Mew
 categories: [AWS, S3]
 tags: [AWS, S3, S3 Vector, RAG]
 keywords: [AWS, S3, S3 Vector, RAG]
 date: 2026-4-18
+last_modified_at: 2026-11-05
 lang: ja
 ---
 

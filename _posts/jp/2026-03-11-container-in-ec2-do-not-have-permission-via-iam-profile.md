@@ -14,12 +14,13 @@ EC2 上で AWS リソースを操作する場合、
 
 ベストプラクティスは IAM Instance Profile Role をアタッチし、最小権限で運用することです。
 
-実際には EC2 側でメタデータサービス経由の認証情報が提供され、
-
-次のコマンドで取得できます。
+EC2 は Instance Metadata Service（IMDS）を通じて、インスタンスプロファイルの一時認証情報を提供します。IMDSv2 が必須の場合、先にトークンを取得してからメタデータをリクエストします。
 
 ```bash
-curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+TOKEN=$(curl -fsS -X PUT http://169.254.169.254/latest/api/token \
+  -H 'X-aws-ec2-metadata-token-ttl-seconds: 21600')
+curl -fsS -H "X-aws-ec2-metadata-token: $TOKEN" \
+  http://169.254.169.254/latest/meta-data/iam/security-credentials/
 ```
 
 正常なら次のように表示されます。
@@ -28,7 +29,7 @@ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
 <IAM Profile Name>
 ```
 
-ただし、EC2 の機能である IMDSv2 を有効化すると、
+ただし、IMDSv2 を必須にすると、
 
 EC2 内のコンテナが認証情報を取得できなくなることがあります。
 
@@ -121,9 +122,7 @@ Optional に戻す以外に手段はないのでしょうか？
 
 3. Docker network policy / iptables
 
-    この方法についてはまだ十分に把握できていません。
-
-    今後実際に遭遇したら追記します。
+    hop limit を確認してもトークンを取得できない場合は、コンテナのネットワーク設定と `169.254.169.254` への通信を遮断するルールを確認します。
 
 ---
 

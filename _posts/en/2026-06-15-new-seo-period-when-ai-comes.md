@@ -1,34 +1,19 @@
 ---
 layout: post
-title: "SEO 4.0: The Era of Being Indexed by AI Agents Has Arrived"
-description: "A look at how SEO has evolved from keywords, backlinks, and content quality to the age of AI Agent indexing, and how website content and structure should adapt for the AI era."
+title: "SEO and AI Search: What Changes for Website Content?"
+description: "A perspective on AI search and practical website basics: make pages crawlable, explain topics clearly, and add firsthand value instead of chasing unverified AI indexing tactics."
 author: Mark_Mew
 categories: [SEO]
 tags: [SEO, AI]
 keywords: [SEO, AI]
 lang: en
 date: 2026-06-15
+last_modified_at: 2026-11-05
 ---
 
-Anyone who works on B2C products or operates a public-facing website
+People use both search engines and AI tools to find information. That changes some discovery paths, but it does not establish a new, separate set of indexing rules for Google Search. I use “SEO 4.0” below as a shorthand for my perspective, not as an official classification.
 
-is probably familiar with the many ways people try to tune SEO.
-
-As the AI era arrives,
-
-users are no longer only expected to practice search techniques.
-
-They are starting to practice how to refine prompts instead.
-
-It is clear that the rise of AI
-
-will also bring a different kind of shift to SEO.
-
-In the past, SEO was about appearing on the first page of Google search results.
-
-Now, the question is how to make your content discoverable, included, and cited by AI tools.
-
-Content that can be indexed by AI will become more valuable. SEO 4.0 has arrived.
+The practical starting point remains a crawlable site and content that answers a real question with clear evidence and firsthand value. Google's [AI search guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) recommends established SEO practices over special AI optimization tricks.
 
 ## SEO
 
@@ -245,23 +230,7 @@ and understand the content of the entire site.
 
 #### SEO 4.0
 
-Now we are entering the AI era.
-
-Except for the obviously outdated tactics from SEO 1.0,
-
-many of the things mentioned earlier may need to be taken seriously again.
-
-Recently, the World Cup has started again.
-
-On Plurk, there was once a meme where someone said that if Germany won the championship, he would go streaking.
-
-There was also a line about scallions from a crosstalk performance by Feng Yi-gang and Song Shao-qing,
-
-which people on Plurk turned into all kinds of JavaScript effects.
-
-Social signals, which we once considered relatively unimportant,
-
-may become worth paying attention to again.
+This is my label for the period in which people also discover pages through AI products. It is not a Google ranking framework. The useful work is still to make the page accessible, keep its claims accurate, and contribute information readers cannot get from a generic summary. I do not have evidence that social activity by itself makes a page index faster.
 
 ### How SEO Strategy Should Change in the AI Era
 

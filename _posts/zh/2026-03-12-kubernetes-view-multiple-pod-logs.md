@@ -1,8 +1,9 @@
 ---
 layout: post
 title: "Kubernetes Pod Logs 教學：快速查看多個 Pod Logs（kubectl 實戰）"
-description: "Kubernetes Pod Logs 教學：快速查看多個 Pod Logs（kubectl 實戰）. Practical notes and implementation steps."
+description: "用 kubectl logs 查看單一 Pod、容器上次執行紀錄，以及依標籤選取的多個 Pod 日誌，包含持續追蹤與顯示 Pod 名稱的範例。"
 date: 2026-03-12
+last_modified_at: 2026-11-05
 categories: [K8S]
 tags: [EKS, K8S]
 ---

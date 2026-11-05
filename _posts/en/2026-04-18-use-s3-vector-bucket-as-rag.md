@@ -1,12 +1,13 @@
 ---
 layout: post
 title: "S3 Vector Bucket Hands-On: Turn the Latest Lingerie Catalog into a Searchable Vector Knowledge Base with Amazon Nova"
-description: "S3 Vector Bucket Hands-On: Turn the Latest Lingerie Catalog into a Searchable Vector Knowledge Base with Amazon Nova"
+description: "Build a product catalog retrieval example with S3 Vectors and Amazon Nova, from embedding and storing catalog entries to querying the vector index."
 author: Mark_Mew
 categories: [AWS, S3]
 tags: [AWS, S3, S3 Vector, RAG]
 keywords: [AWS, S3, S3 Vector, RAG]
 date: 2026-4-18
+last_modified_at: 2026-11-05
 lang: en
 ---
 

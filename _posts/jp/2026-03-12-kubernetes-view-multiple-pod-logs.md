@@ -1,8 +1,9 @@
 ---
 layout: post
 title: "Kubernetes Pod Logs 入門：kubectl で複数 Pod のログを素早く確認する方法"
-description: "Kubernetes Pod Logs 入門：kubectl で複数 Pod のログを素早く確認する方法. Practical notes and implementation steps."
+description: "kubectl logs で単一 Pod、再起動前のコンテナ、ラベルで選んだ複数 Pod のログを確認する方法を、実行例とともに紹介します。"
 date: 2026-03-12
+last_modified_at: 2026-11-05
 categories: [K8S]
 tags: [EKS, K8S]
 lang: ja
