@@ -101,7 +101,6 @@ sitemap_urls = []
 # Add homepage
 sitemap_urls << {
   loc: "#{site_url}/",
-  lastmod: Time.now.to_datetime.to_s,
   changefreq: 'daily',
   priority: '1.0'
 }
@@ -110,7 +109,6 @@ sitemap_urls << {
 ['en', 'ja'].each do |lang|
   sitemap_urls << {
     loc: "#{site_url}/#{lang}/",
-    lastmod: Time.now.to_datetime.to_s,
     changefreq: 'daily',
     priority: '0.8'
   }
@@ -134,7 +132,6 @@ hub_pages = [
 hub_pages.each do |hub|
   sitemap_urls << {
     loc: "#{site_url}#{hub}",
-    lastmod: Time.now.to_datetime.to_s,
     changefreq: 'weekly',
     priority: '0.6'
   }

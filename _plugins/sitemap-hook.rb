@@ -96,7 +96,6 @@ Jekyll::Hooks.register :site, :post_write do |site|
   # Add homepage
   sitemap_urls << {
     loc: "#{site_url}/",
-    lastmod: Time.now.to_datetime.to_s,
     changefreq: 'daily',
     priority: '1.0'
   }
@@ -105,7 +104,6 @@ Jekyll::Hooks.register :site, :post_write do |site|
   ['en', 'ja'].each do |lang|
     sitemap_urls << {
       loc: "#{site_url}/#{lang}/",
-      lastmod: Time.now.to_datetime.to_s,
       changefreq: 'daily',
       priority: '0.8'
     }
@@ -129,7 +127,6 @@ Jekyll::Hooks.register :site, :post_write do |site|
   hub_pages.each do |hub|
     sitemap_urls << {
       loc: "#{site_url}#{hub}",
-      lastmod: Time.now.to_datetime.to_s,
       changefreq: 'weekly',
       priority: '0.6'
     }

@@ -6,7 +6,6 @@ sitemap: false
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>{{ site.url }}/</loc>
-    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -15,7 +14,6 @@ sitemap: false
   {% for home in language_homes %}
   <url>
     <loc>{{ site.url }}{{ home }}</loc>
-    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -54,7 +52,6 @@ sitemap: false
   <url>
     <loc>{{ site.url }}{{ tab_url }}</loc>
     {% if tab.last_modified_at %}<lastmod>{{ tab.last_modified_at | date_to_xmlschema }}</lastmod>
-    {% else %}<lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
     {% endif %}
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -65,7 +62,6 @@ sitemap: false
   {% for hub_url in hub_urls %}
   <url>
     <loc>{{ site.url }}{{ hub_url }}</loc>
-    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
