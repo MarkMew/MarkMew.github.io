@@ -14,8 +14,8 @@ Jekyll::Hooks.register :site, :post_write do |site|
   
   # Scan each language directory in _posts
   if Dir.exist?(posts_base)
-    Dir.glob(File.join(posts_base, '*')).each do |lang_dir|
-      next unless File.directory?(lang_dir)
+    Dir.glob(File.join('_posts', '*'), base: site.source).each do |lang_dir|
+      next unless File.directory?(File.join(site.source, lang_dir))
       lang_folder = File.basename(lang_dir)
       
       # Map folder name to lang code
@@ -27,9 +27,10 @@ Jekyll::Hooks.register :site, :post_write do |site|
                   end
       
       # Find all markdown files in this language directory
-      Dir.glob(File.join(lang_dir, '*.md')).sort.reverse.each do |post_path|
+      Dir.glob(File.join(lang_dir, '*.md'), base: site.source).sort.reverse.each do |post_path|
         begin
-          content = File.read(post_path)
+          source_path = File.join(site.source, post_path)
+          content = File.read(source_path)
           
           # Extract YAML frontmatter
           if content =~ /\A---\s*\n(.*?)\n---\s*\n/m
@@ -69,7 +70,7 @@ Jekyll::Hooks.register :site, :post_write do |site|
           # Get last modified date
           lastmod = post_data['last_modified_at'] || post_data['date']
           if lastmod.nil?
-            lastmod = File.mtime(post_path).to_datetime.to_s
+            lastmod = File.mtime(source_path).to_datetime.to_s
           elsif lastmod.is_a?(Date) || lastmod.is_a?(Time)
             lastmod = lastmod.to_datetime.to_s
           else
