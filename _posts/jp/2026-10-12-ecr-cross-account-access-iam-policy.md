@@ -13,7 +13,7 @@ date: 2026-10-12
 
 **アクセス元の AWS アカウントにある IAM ロールから、別アカウントの Amazon ECR プライベートリポジトリのイメージを Pull するには、アクセス先の Repository Policy でロールを許可し、アクセス元の IAM Policy でも必要な ECR アクションを許可します。** また、ECR Registry にログインするには、アクセス元のロールに `ecr:GetAuthorizationToken` が必要です。ログインできても、Repository Policy で許可されていなければイメージの Pull は失敗します。[ECR Repository Policy のドキュメント](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policies.html)
 
-この記事では、「アカウント A のアプリケーションがアカウント B のプライベートリポジトリからイメージを Pull する」ケースを例に、最小権限の設定、ECR へのログイン、イメージの Pull、よくあるエラーの確認方法を説明します。[S3 のクロスアカウントアクセスの記事](/posts/s3-cross-account-access-iam-bucket-policy/)も参考にしてください。
+この記事では、「アカウント A のアプリケーションがアカウント B のプライベートリポジトリからイメージを Pull する」ケースを例に、最小権限の設定、ECR へのログイン、イメージの Pull、よくあるエラーの確認方法を説明します。[S3 のクロスアカウントアクセスの記事](/ja/posts/s3-cross-account-access-iam-bucket-policy/)も参考にしてください。
 
 ## Repository Policy と IAM Policy の役割
 

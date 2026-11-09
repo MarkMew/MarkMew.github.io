@@ -13,7 +13,7 @@ date: 2026-10-12
 
 **To let an IAM role in one AWS account pull images from a private Amazon ECR repository in another account, the destination repository policy must allow the role, and the source role's IAM policy must allow the required ECR actions.** The source role also needs `ecr:GetAuthorizationToken` to authenticate to the registry. A successful login alone does not grant access to a repository.[Amazon ECR repository policies](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-policies.html)
 
-This article walks through a least-privilege setup for an application in Account A that pulls an image from a private repository in Account B. It covers the policies, AWS CLI and Docker commands, and common troubleshooting steps. You can also read the [S3 cross-account access guide](/posts/s3-cross-account-access-iam-bucket-policy/).
+This article walks through a least-privilege setup for an application in Account A that pulls an image from a private repository in Account B. It covers the policies, AWS CLI and Docker commands, and common troubleshooting steps. You can also read the [S3 cross-account access guide](/en/posts/s3-cross-account-access-iam-bucket-policy/).
 
 ## Repository policies and IAM policies
 

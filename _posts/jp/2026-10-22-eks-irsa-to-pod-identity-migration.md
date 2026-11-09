@@ -16,7 +16,7 @@ IRSA は OIDC identity federation と STS の Web Identity を利用します。
 
 移行する場合は、EKS Pod Identity Agent の導入、`pods.eks.amazonaws.com` を信頼する IAM ロールの設定、既存の namespace と ServiceAccount に対する関連付けの作成、IRSA annotation の削除、Pod の再作成という順序で進めます。S3 や Secrets Manager などへのアクセスを許可する既存の IAM 権限ポリシーは、通常そのまま利用できます。
 
-以下では、EKS の EC2 ノードで動く `database-backup/database-backup-sa` を例にします。IRSA の設定については、[既存の記事](/posts/aws-eks-irsa-service-account-iam-role/)も参照してください。
+以下では、EKS の EC2 ノードで動く `database-backup/database-backup-sa` を例にします。IRSA の設定については、[既存の記事](/ja/posts/aws-eks-irsa-service-account-iam-role/)も参照してください。
 
 ## IRSA と Pod Identity の違い
 

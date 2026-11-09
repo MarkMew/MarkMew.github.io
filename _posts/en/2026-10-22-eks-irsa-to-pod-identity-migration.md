@@ -16,7 +16,7 @@ IRSA uses OIDC identity federation and STS web identity. Its model resembles an 
 
 If you choose to migrate, install the EKS Pod Identity Agent, update the IAM role to trust `pods.eks.amazonaws.com`, create an association for the existing namespace and service account, remove the IRSA annotation, and replace the Pods. The IAM permissions granting access to S3, Secrets Manager, and other services can generally stay as they are.
 
-This walkthrough uses `database-backup/database-backup-sa` on EKS EC2 nodes. For background, see the [IRSA setup example](/posts/aws-eks-irsa-service-account-iam-role/).
+This walkthrough uses `database-backup/database-backup-sa` on EKS EC2 nodes. For background, see the [IRSA setup example](/en/posts/aws-eks-irsa-service-account-iam-role/).
 
 ## IRSA versus Pod Identity
 

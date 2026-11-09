@@ -12,7 +12,7 @@ date: 2026-11-02
 
 **脆弱性スキャンの指摘のうち、いくつかの代表的な項目は、バックエンドのコードを変更しなくても ALB の設定で対処できます。** HTTP Request Smuggling、無効な HTTP ヘッダー、弱い暗号スイート、そして HSTS、`X-Content-Type-Options`、`X-Frame-Options`、`Content-Security-Policy` といったレスポンスヘッダーの未設定が該当します。ただし、これらの設定でできるのはリスクの低減までです。アプリケーション自体のセキュリティ設計の代わりにはなりませんし、特に CSP は汎用的な値をそのまま適用することはできません。[Application Load Balancer の HTTP ヘッダー変更（AWS）](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/header-modification.html)
 
-TLS については前回の記事 [ALB のセキュリティポリシーを見直す](/posts/alb-security-policy-upgrade-from-2016-08/) で詳しく扱っているため、この記事では暗号スイートの項目で要点だけを紹介します。残りの 6 項目は ALB の設定を中心に、AWS CLI と Terraform の両方で紹介します。
+TLS については前回の記事 [ALB のセキュリティポリシーを見直す](/ja/posts/alb-security-policy-upgrade-from-2016-08/) で詳しく扱っているため、この記事では暗号スイートの項目で要点だけを紹介します。残りの 6 項目は ALB の設定を中心に、AWS CLI と Terraform の両方で紹介します。
 
 ## ALB のアーキテクチャ上の位置づけ
 
@@ -82,7 +82,7 @@ HTTP ヘッダーのフィールド名には形式の制約があります。Ela
 
 ALB の TLS バージョンと暗号スイートは、HTTPS リスナーのセキュリティポリシーで決まります。カスタマイズはできず、AWS が提供する一覧から選ぶ形になります。スキャナーが指摘しやすいのは、TLS 1.0、TLS 1.1、CBC モードの暗号スイート、Forward Secrecy を持たない RSA 鍵交換です。TLS 1.3 では AEAD 暗号だけが残り、Forward Secrecy を持つ鍵交換が必須になります。
 
-一般的な現代の Web システムであれば、`ELBSecurityPolicy-TLS13-1-2-Res-2021-06` が適しています。TLS 1.3 と 1.2 に対応し、TLS 1.0/1.1 と CBC の暗号スイートを含みません。AWS が現在推奨しているのは PQ 系の `ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09` です。両者の選び方、クライアントの互換性の確認、切り替えの手順は[前回の記事](/posts/alb-security-policy-upgrade-from-2016-08/)を参照してください。[Application Load Balancer のセキュリティポリシー（AWS）](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html)
+一般的な現代の Web システムであれば、`ELBSecurityPolicy-TLS13-1-2-Res-2021-06` が適しています。TLS 1.3 と 1.2 に対応し、TLS 1.0/1.1 と CBC の暗号スイートを含みません。AWS が現在推奨しているのは PQ 系の `ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09` です。両者の選び方、クライアントの互換性の確認、切り替えの手順は[前回の記事](/ja/posts/alb-security-policy-upgrade-from-2016-08/)を参照してください。[Application Load Balancer のセキュリティポリシー（AWS）](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html)
 
 この設定が影響するのは、クライアントから ALB までの区間だけです。CloudFront、ほかの CDN、プロキシの TLS 設定は別に確認する必要があります。
 

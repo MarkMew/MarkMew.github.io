@@ -12,7 +12,7 @@ date: 2026-11-02
 
 **Several common findings in vulnerability scan reports can be addressed by changing ALB settings, with no changes to your backend code.** That includes HTTP Request Smuggling, invalid HTTP headers, weak cipher suites, and missing HSTS, `X-Content-Type-Options`, `X-Frame-Options`, and `Content-Security-Policy` response headers. These settings only reduce risk, though. They don't replace secure application design, and CSP in particular can't be handled with one generic value. See [HTTP header modification for your Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/header-modification.html).
 
-I covered TLS in the previous post, [Upgrading ALB Security Policies](/posts/alb-security-policy-upgrade-from-2016-08/), so this post only summarizes the cipher suite section. The other six items focus on ALB settings, with both AWS CLI and Terraform examples.
+I covered TLS in the previous post, [Upgrading ALB Security Policies](/en/posts/alb-security-policy-upgrade-from-2016-08/), so this post only summarizes the cipher suite section. The other six items focus on ALB settings, with both AWS CLI and Terraform examples.
 
 ## Where the ALB Sits in Your Architecture
 
@@ -82,7 +82,7 @@ These two settings are often mentioned together, but they address different prob
 
 The TLS versions and cipher suites on an ALB are determined by the HTTPS listener's security policy. You can't customize them, only pick from the list AWS provides. Scanners most often flag TLS 1.0, TLS 1.1, CBC cipher suites, and RSA key exchange without forward secrecy. TLS 1.3 keeps only AEAD ciphers and requires key exchange with forward secrecy.
 
-For most modern web systems, `ELBSecurityPolicy-TLS13-1-2-Res-2021-06` is a good choice. It supports TLS 1.3 and 1.2, excludes TLS 1.0/1.1, and has no CBC cipher suites. AWS currently recommends the PQ policy `ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09`. For choosing between them, checking client compatibility, and the full switching procedure, see the [previous post](/posts/alb-security-policy-upgrade-from-2016-08/). See also [Security policies for your Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html).
+For most modern web systems, `ELBSecurityPolicy-TLS13-1-2-Res-2021-06` is a good choice. It supports TLS 1.3 and 1.2, excludes TLS 1.0/1.1, and has no CBC cipher suites. AWS currently recommends the PQ policy `ELBSecurityPolicy-TLS13-1-2-Res-PQ-2025-09`. For choosing between them, checking client compatibility, and the full switching procedure, see the [previous post](/en/posts/alb-security-policy-upgrade-from-2016-08/). See also [Security policies for your Application Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/describe-ssl-policies.html).
 
 This setting only affects the segment between the client and the ALB. The TLS settings of CloudFront, other CDNs, or proxies have to be checked separately.
 
