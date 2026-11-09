@@ -17,6 +17,7 @@
 
     <a class="site-title d-block" href="{{ '/' | relative_url }}">{{ localized_title }}</a>
     <p class="site-subtitle fst-italic mb-0">{{ localized_tagline }}</p>
+    {% include language-switcher.html scope='site' lang=include.lang %}
   </header>
   <!-- .profile-wrapper -->
 

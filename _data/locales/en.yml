@@ -3,6 +3,8 @@
 # ----- Commons label -----
 
 site:
+  language_name: English
+  language_label: Language
   title: Cloud Magician
   tagline: A cloud-focused engineer
   description: Notes and practical guides on AWS, Kubernetes, CI/CD, and cloud infrastructure.

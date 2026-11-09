@@ -38,6 +38,10 @@ Dir.glob(File.join(destination, '**', 'index.html')).each do |file|
   noindex = attribute.call(robots.to_s, 'content').split(',').include?('noindex')
   html_lang = html[/<html\b[^>]*\blang="([^"]+)"/, 1]
   expected_lang = path.start_with?('/en/') ? 'en' : path.start_with?('/ja/') ? 'ja' : 'zh-TW'
+  if path.match?(%r{^/(?:en/|ja/)?posts/([^/]+)/$})
+    slug = path[%r{/posts/([^/]+)/$}, 1]
+    errors << "#{path}: translated article must be indexable" if noindex && source_languages[slug].include?(expected_lang)
+  end
   expected_locale = { 'en' => 'en_US', 'ja' => 'ja_JP', 'zh-TW' => 'zh_TW' }.fetch(expected_lang)
   errors << '/ja/about/: untranslated page should be noindex' if path == '/ja/about/' && !noindex
 
@@ -75,6 +79,16 @@ Dir.glob(File.join(destination, '**', 'index.html')).each do |file|
                         else []
                         end
   errors << "#{path}: hreflang set #{alternates.keys.inspect}, expected #{expected_alternates.inspect}" unless alternates.keys.sort == expected_alternates.sort
+  if path.match?(%r{^/(?:en/|ja/)?posts/[^/]+/$}) && !noindex && expected_alternates.size > 1
+    switcher = html[/<nav\b[^>]*data-language-switcher="post"[^>]*>(.*?)<\/nav>/m, 1].to_s
+    language_links = switcher.scan(/<a\b[^>]*>/).to_h do |tag|
+      [attribute.call(tag, 'hreflang'), attribute.call(tag, 'href')]
+    end
+    expected_links = alternates.reject { |language, _| language == expected_lang }.transform_values do |target|
+      URI.parse(target).path
+    end
+    errors << "#{path}: visible translation links differ from hreflang targets" unless language_links == expected_links
+  end
   errors << "#{path}: invalid or double language prefix" if html.match?(%r{/en/en/|/ja/ja/})
   pages[url] = { path: path, alternates: alternates }
 end

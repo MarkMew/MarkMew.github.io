@@ -1,0 +1,28 @@
+{% assign switcher_lang = include.lang | default: lang %}
+{% assign switcher_languages = site.languages %}
+{% assign switcher_path = '/' %}
+{% assign show_switcher = true %}
+{% if include.scope == 'post' %}
+  {% assign switcher_languages = site.data.post_translations[page.url] %}
+  {% assign switcher_path = page.url %}
+  {% unless switcher_languages contains switcher_lang %}
+    {% assign show_switcher = false %}
+  {% endunless %}
+{% endif %}
+{% if show_switcher and switcher_languages.size > 1 %}
+  <nav class="language-switcher d-flex flex-wrap gap-3 small my-3" data-language-switcher="{{ include.scope }}" aria-label="{{ site.data.locales[switcher_lang].site.language_label }}">
+    {% for language in site.languages %}
+      {% unless switcher_languages contains language %}{% continue %}{% endunless %}
+      {% assign language_name = site.data.locales[language].site.language_name %}
+      {% if language == switcher_lang %}
+        <span lang="{{ language }}" aria-current="true" class="text-muted">{{ language_name }}</span>
+      {% else %}
+        {% assign language_path = switcher_path %}
+        {% unless language == site.default_lang %}
+          {% assign language_path = switcher_path | prepend: language | prepend: '/' %}
+        {% endunless %}
+        <a {% static_href %}href="{{ language_path | relative_url }}"{% endstatic_href %} lang="{{ language }}" hreflang="{{ language }}">{{ language_name }}</a>
+      {% endif %}
+    {% endfor %}
+  </nav>
+{% endif %}

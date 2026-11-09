@@ -3,6 +3,8 @@
 # ----- Commons label -----
 
 site:
+  language_name: 日本語
+  language_label: 言語
   title: クラウド魔法使い
   tagline: クラウドに特化したエンジニア
   description: AWS、Kubernetes、CI/CD、クラウドインフラに関する実践的なメモと解説をまとめています。

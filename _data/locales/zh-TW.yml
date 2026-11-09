@@ -3,6 +3,8 @@
 # ----- Commons label -----
 
 site:
+  language_name: 繁體中文
+  language_label: 語言
   title: 雲端魔法師
   tagline: 一個專注於雲端的工程師
   description: AWS、Kubernetes、CI/CD、Linux 與雲端基礎架構的實戰筆記與教學。

@@ -1,162 +1,67 @@
 #!/usr/bin/env ruby
-#
-# Generate multi-language sitemap
-# Usage: ruby tools/generate_sitemap.rb [output_dir]
-
-require 'fileutils'
-require 'yaml'
-require 'date'
+# Generate a sitemap from the canonical HTML that was actually built.
+require 'cgi'
+require 'json'
 require 'time'
+require 'uri'
+require 'yaml'
 
-# Allow YAML to deserialize Date objects
-YAML::ENGINE.yamler = 'psych' if YAML.respond_to?(:engine=)
+module MarkMew
+  module Sitemap
+    def self.generate(output_dir, config)
+      output_dir = output_dir.sub(%r{[\\/]+$}, '')
+      origin = config.fetch('url').sub(%r{/$}, '')
+      baseurl = config.fetch('baseurl', '').to_s.sub(%r{/$}, '')
+      entries = []
 
-output_dir = ARGV[0] || '_site'
-site_url = 'https://www.markmew.com'
-posts_base = '_posts'
+      Dir.glob('**/index.html', base: output_dir).sort.each do |relative|
+        file = File.join(output_dir, relative)
+        path = "/#{relative}".sub(%r{/index\.html$}, '/')
+        # List articles and language hubs; exclude pagination and taxonomy detail pages.
+        next unless path.match?(%r{\A/(?:en/|ja/)?(?:posts/[^/]+/|archives/|categories/|tags/)?\z})
 
-all_posts = []
+        html = File.read(file, encoding: 'UTF-8')
+        attribute = ->(tag, name) { CGI.unescapeHTML(tag[/\b#{name}="([^"]*)"/, 1].to_s) }
+        noindex = html.scan(/<meta\b[^>]*>/).any? do |tag|
+          attribute.call(tag, 'name').downcase == 'robots' &&
+            attribute.call(tag, 'content').downcase.split(/[\s,]+/).include?('noindex')
+        end
+        next if noindex
 
-# Scan each language directory in _posts
-if Dir.exist?(posts_base)
-  Dir.glob(File.join(posts_base, '*')).each do |lang_dir|
-    next unless File.directory?(lang_dir)
-    lang_folder = File.basename(lang_dir)
-    
-    # Map folder name to lang code
-    lang_code = case lang_folder
-                when 'zh' then 'zh-TW'
-                when 'en' then 'en'
-                when 'jp' then 'ja'
-                else lang_folder
-                end
-    
-    # Find all markdown files in this language directory
-    Dir.glob(File.join(lang_dir, '*.md')).sort.reverse.each do |post_path|
-      begin
-        content = File.read(post_path)
-        
-        # Extract YAML frontmatter
-        if content =~ /\A---\s*\n(.*?)\n---\s*\n/m
-          frontmatter_str = $1
-          post_data = YAML.safe_load(
-            frontmatter_str,
-            permitted_classes: [Date, Time],
-            aliases: true
-          ) || {}
-        else
-          next
+        canonical_tags = html.scan(/<link\b[^>]*>/).select { |tag| attribute.call(tag, 'rel') == 'canonical' }
+        url = "#{origin}#{baseurl}#{URI::DEFAULT_PARSER.escape(path)}"
+        unless canonical_tags.one? && attribute.call(canonical_tags.first, 'href') == url
+          raise "Sitemap: expected a self canonical in #{file}"
         end
-        
-        # Extract title and date from filename: YYYY-MM-DD-title.md
-        filename = File.basename(post_path)
-        if filename =~ /^(\d{4})-(\d{1,2})-(\d{1,2})-(.+)\.md$/
-          post_title = $4
-        else
-          next
+
+        entry = { loc: url }
+        if path.include?('/posts/')
+          json_ld = html[/<script type="application\/ld\+json">(.*?)<\/script>/m, 1]
+          data = json_ld ? JSON.parse(json_ld) : {}
+          modified = data['dateModified'] || data['datePublished']
+          entry[:lastmod] = Time.iso8601(modified).iso8601 if modified
         end
-        
-        # Build post URL
-        post_url = "/posts/#{post_title}/"
-        
-        # Prepend language path for non-default languages
-        if lang_code != 'zh-TW'
-          case lang_code
-          when 'en'
-            post_url = "/en#{post_url}"
-          when 'ja'
-            post_url = "/ja#{post_url}"
-          else
-            post_url = "/#{lang_code}#{post_url}"
-          end
-        end
-        
-        # Get last modified date
-        lastmod = post_data['last_modified_at'] || post_data['date']
-        if lastmod.nil?
-          lastmod = File.mtime(post_path).to_datetime.to_s
-        elsif lastmod.is_a?(Date) || lastmod.is_a?(Time)
-          lastmod = lastmod.to_datetime.to_s
-        else
-          lastmod = lastmod.to_s
-        end
-        
-        all_posts << {
-          url: post_url,
-          lastmod: lastmod,
-          lang: lang_code
-        }
-      rescue Psych::Exception => e
-        warn "Sitemap: Error parsing #{post_path}: #{e.message}"
-      rescue => e
-        warn "Sitemap: Error processing #{post_path}: #{e.message}"
+        entries << entry
       end
+
+      raise "Sitemap: no canonical pages found in #{output_dir}" if entries.empty?
+
+      xml = %(<?xml version="1.0" encoding="UTF-8"?>\n)
+      xml << %(<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n)
+      entries.each do |entry|
+        xml << "  <url>\n"
+        entry.each { |name, value| xml << "    <#{name}>#{CGI.escapeHTML(value)}</#{name}>\n" }
+        xml << "  </url>\n"
+      end
+      xml << "</urlset>\n"
+      File.write(File.join(output_dir, 'sitemap.xml'), xml, encoding: 'UTF-8')
+      entries.size
     end
   end
 end
 
-# Build sitemap XML
-sitemap_urls = []
-
-# Add homepage
-sitemap_urls << {
-  loc: "#{site_url}/",
-  changefreq: 'daily',
-  priority: '1.0'
-}
-
-# Add language homes
-['en', 'ja'].each do |lang|
-  sitemap_urls << {
-    loc: "#{site_url}/#{lang}/",
-    changefreq: 'daily',
-    priority: '0.8'
-  }
+if $PROGRAM_NAME == __FILE__
+  config = YAML.load_file('_config.yml')
+  count = MarkMew::Sitemap.generate(ARGV.fetch(0, '_site'), config)
+  puts "Sitemap generated: #{count} canonical pages"
 end
-
-# Add all posts
-all_posts.each do |post|
-  sitemap_urls << {
-    loc: "#{site_url}#{post[:url]}",
-    lastmod: post[:lastmod],
-    changefreq: 'monthly',
-    priority: '0.9'
-  }
-end
-
-# Add hub pages
-hub_pages = [
-  '/en/archives/', '/en/categories/', '/en/tags/',
-  '/ja/archives/', '/ja/categories/', '/ja/tags/'
-]
-hub_pages.each do |hub|
-  sitemap_urls << {
-    loc: "#{site_url}#{hub}",
-    changefreq: 'weekly',
-    priority: '0.6'
-  }
-end
-
-# Generate XML
-sitemap_xml = %(<?xml version="1.0" encoding="UTF-8"?>\n)
-sitemap_xml += %(<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n)
-
-sitemap_urls.each do |entry|
-  sitemap_xml += %(  <url>\n)
-  sitemap_xml += %(    <loc>#{entry[:loc]}</loc>\n)
-  sitemap_xml += %(    <lastmod>#{entry[:lastmod]}</lastmod>\n) if entry[:lastmod]
-  sitemap_xml += %(    <changefreq>#{entry[:changefreq]}</changefreq>\n) if entry[:changefreq]
-  sitemap_xml += %(    <priority>#{entry[:priority]}</priority>\n) if entry[:priority]
-  sitemap_xml += %(  </url>\n)
-end
-
-sitemap_xml += %(</urlset>\n)
-
-# Write to output
-FileUtils.mkdir_p(output_dir) unless Dir.exist?(output_dir)
-sitemap_path = File.join(output_dir, 'sitemap.xml')
-File.write(sitemap_path, sitemap_xml)
-
-langs = all_posts.map{|p|p[:lang]}.uniq.sort.join(', ')
-puts "✓ Sitemap generated: #{all_posts.length} posts across #{langs}"
-puts "  Output: #{sitemap_path}"
