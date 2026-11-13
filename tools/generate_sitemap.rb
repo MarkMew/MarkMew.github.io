@@ -34,7 +34,13 @@ module MarkMew
           raise "Sitemap: expected a self canonical in #{file}"
         end
 
-        entry = { loc: url }
+        alternates = html.scan(/<link\b[^>]*>/).filter_map do |tag|
+          hreflang = attribute.call(tag, 'hreflang')
+          next if attribute.call(tag, 'rel') != 'alternate' || hreflang.empty?
+
+          { hreflang: hreflang, href: attribute.call(tag, 'href') }
+        end
+        entry = { loc: url, alternates: alternates }
         if path.include?('/posts/')
           json_ld = html[/<script type="application\/ld\+json">(.*?)<\/script>/m, 1]
           data = json_ld ? JSON.parse(json_ld) : {}
@@ -47,10 +53,14 @@ module MarkMew
       raise "Sitemap: no canonical pages found in #{output_dir}" if entries.empty?
 
       xml = %(<?xml version="1.0" encoding="UTF-8"?>\n)
-      xml << %(<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n)
+      xml << %(<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n)
       entries.each do |entry|
         xml << "  <url>\n"
-        entry.each { |name, value| xml << "    <#{name}>#{CGI.escapeHTML(value)}</#{name}>\n" }
+        xml << "    <loc>#{CGI.escapeHTML(entry[:loc])}</loc>\n"
+        entry[:alternates].each do |alternate|
+          xml << %(    <xhtml:link rel="alternate" hreflang="#{CGI.escapeHTML(alternate[:hreflang])}" href="#{CGI.escapeHTML(alternate[:href])}" />\n)
+        end
+        xml << "    <lastmod>#{CGI.escapeHTML(entry[:lastmod])}</lastmod>\n" if entry[:lastmod]
         xml << "  </url>\n"
       end
       xml << "</urlset>\n"

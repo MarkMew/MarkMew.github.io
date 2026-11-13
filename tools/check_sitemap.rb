@@ -12,6 +12,7 @@ site_dir = ARGV[0] || '_site'
 sitemap_path = File.join(site_dir, 'sitemap.xml')
 baseline_path = ARGV[1]
 namespace = 'http://www.sitemaps.org/schemas/sitemap/0.9'
+XHTML_NAMESPACE = 'http://www.w3.org/1999/xhtml'
 
 abort "Sitemap not found: #{sitemap_path}" unless File.file?(sitemap_path)
 
@@ -21,6 +22,9 @@ def read_sitemap(path, namespace, require_no_stylesheet:)
 
   document = REXML::Document.new(xml)
   abort "Invalid sitemap namespace in #{path}" unless document.root&.name == 'urlset' && document.root.namespace == namespace
+  if require_no_stylesheet
+    abort "Invalid sitemap xhtml namespace in #{path}" unless document.root.namespaces['xhtml'] == XHTML_NAMESPACE
+  end
 
   urls = REXML::XPath.match(document, '/s:urlset/s:url', { 's' => namespace })
   locations = urls.map { |entry| REXML::XPath.first(entry, 's:loc', { 's' => namespace })&.text }
@@ -57,6 +61,18 @@ urls.each do |entry|
   abort "Sitemap includes a noindex page: #{url}" if blocked
   canonical = html.scan(/<link\b[^>]*>/).find { |tag| attribute.call(tag, 'rel') == 'canonical' }
   abort "Sitemap URL differs from canonical: #{url}" unless attribute.call(canonical.to_s, 'href') == url
+  html_alternates = html.scan(/<link\b[^>]*>/).filter_map do |tag|
+    language = attribute.call(tag, 'hreflang')
+    next if attribute.call(tag, 'rel') != 'alternate' || language.empty?
+
+    [language, attribute.call(tag, 'href')]
+  end
+  xml_alternates = REXML::XPath.match(entry, 'xhtml:link', { 'xhtml' => XHTML_NAMESPACE }).map do |link|
+    abort "Invalid sitemap alternate relation: #{url}" unless link.attributes['rel'] == 'alternate'
+
+    [link.attributes['hreflang'], link.attributes['href']]
+  end
+  abort "Sitemap hreflang differs from page: #{url}" unless xml_alternates == html_alternates
   lastmod = REXML::XPath.first(entry, 's:lastmod', { 's' => namespace })&.text
   next unless lastmod
 
