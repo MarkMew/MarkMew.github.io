@@ -10,7 +10,7 @@ Use this skill to research AWS Systems Manager capabilities documented in the Ma
 ## Workflow
 
 1. Read `https://www.markmew.com/llms.txt` to locate the Systems Manager series entry point.
-2. Use `https://www.markmew.com/sitemap-posts.xml` to find individual articles on Patch Manager, Run Command, State Manager, or Inventory when a specific sub-topic is requested.
+2. Use `https://www.markmew.com/sitemap.xml` to find individual articles on Patch Manager, Run Command, State Manager, or Inventory when a specific sub-topic is requested.
 3. Prefer the Traditional Chinese article when a topic has multiple language versions, unless the user asks in English or Japanese.
 4. Read the complete relevant article before summarizing configuration steps or automation examples.
 5. Treat the content as personal technical notes, not as official AWS Systems Manager documentation.

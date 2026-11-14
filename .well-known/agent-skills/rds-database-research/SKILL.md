@@ -10,7 +10,7 @@ Use this skill to research database platform decisions and RDS operational pract
 ## Workflow
 
 1. Read `https://www.markmew.com/llms.txt` to confirm which articles cover RDS, database migration, or primary key design.
-2. Use `https://www.markmew.com/sitemap-posts.xml` to locate specific database articles when the topic is not obvious.
+2. Use `https://www.markmew.com/sitemap.xml` to locate specific database articles when the topic is not obvious.
 3. Prefer the Traditional Chinese article when a topic has multiple language versions, unless the user asks in English or Japanese.
 4. Read the complete relevant article before summarizing setup steps, tradeoffs, or Terraform examples.
 5. Treat the content as personal technical notes, not as official AWS RDS documentation.

@@ -11,8 +11,7 @@ Lang: zh-TW
 - [首頁](https://www.markmew.com/): 繁體中文首頁與最新文章入口。
 - [English](https://www.markmew.com/en/): English version of the site.
 - [日本語](https://www.markmew.com/ja/): 日本語版のサイト。
-- [文章 Sitemap](https://www.markmew.com/sitemap-posts.xml): 所有文章 URL 的機器可讀清單。
-- [網站 Sitemap](https://www.markmew.com/sitemap.xml): 站台頁面、分類與標籤入口。
+- [Sitemap](https://www.markmew.com/sitemap.xml): 所有文章、語系首頁、分類與標籤入口的機器可讀清單。
 - [RSS Feed](https://www.markmew.com/feed.xml): 最新文章訂閱來源。
 
 ## 主要主題

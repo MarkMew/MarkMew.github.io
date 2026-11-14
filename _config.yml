@@ -184,6 +184,7 @@ exclude_from_localization:
   - assets
   - sitemap.xml
   - robots.txt
+  - 07c696f22d3b46a48f6cf8c0cffe8371.txt
   - feed.xml
   - app.min.js
   - sw.min.js
