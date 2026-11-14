@@ -6,10 +6,34 @@
  * the normal HTML origin.
  *
  * This does not require the paid "Markdown for Agents" zone feature.
+ *
+ * Direct requests for a post's `index.md` get a `Link: rel="canonical"`
+ * header pointing at the HTML post, so search engines treat the Markdown
+ * file as a variant instead of duplicate content.
  */
+const POST_MARKDOWN_PATH = /^(\/(?:en\/|ja\/)?posts\/[^/]+\/)index\.md$/;
+
+function withCanonical(response, canonicalUrl) {
+  const headers = new Headers(response.headers);
+  headers.append("Link", `<${canonicalUrl}>; rel="canonical"`);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request) {
     const url = new URL(request.url);
+
+    const markdownFile = url.pathname.match(POST_MARKDOWN_PATH);
+    if (markdownFile) {
+      const response = await fetch(request);
+      if (!response.ok) return response;
+      return withCanonical(response, new URL(markdownFile[1], url.origin).href);
+    }
+
     const accept = request.headers.get("Accept") || "";
     const wantsMarkdown = accept.split(",").some((entry) => {
       const [type, ...parameters] = entry.split(";");
