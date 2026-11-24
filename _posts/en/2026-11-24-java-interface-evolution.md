@@ -10,7 +10,9 @@ lang: en
 date: 2026-11-24
 ---
 
-Since Java 8, interfaces are no longer limited to abstract methods and constants. They gained default, static, and private methods, and later records, sealed interfaces, and pattern matching changed how interfaces are used.
+Are all Java interface methods public, and can they all be inherited and implemented?
+
+The answer is both right and wrong, depending on the Java version you use. Before Java 8, interface methods were implicitly `public abstract` and had to be implemented by implementing classes, so saying they are all public was true. Later versions gradually changed this: Java 8 added `default` and `static` methods, which must be public, and implementing classes can choose to override them; Java 9 added `private` methods, which let default methods share internal logic without exposing helper methods; Java 17 added `sealed` interfaces, which use `permits` to restrict implementation to the listed classes or subinterfaces.
 
 This post goes through these changes version by version, explains the problem each feature solves, and shows an example of each.
 
@@ -158,7 +160,7 @@ class C implements A, B {
 }
 ```
 
-Interfaces can also use `extends` to inherit from one or more interfaces, for example `interface C extends A, B {}`.
+Interfaces can also use `extends` to inherit from one or more interfaces, for example `interface D extends A, B {}`.
 
 ## Java 16: Records
 
@@ -196,12 +198,12 @@ Records are a good fit for DTOs, returning multiple values from a method, map ke
 
 ## Java 17: Sealed Interfaces and Java 21 Pattern Matching
 
-A sealed interface restricts which classes can implement it. Combined with `switch` pattern matching in Java 21, the compiler can check that every case is handled.
+A sealed interface restricts which classes or subinterfaces can implement or extend it. Combined with `switch` pattern matching in Java 21, the compiler can check that every case is handled.
 
 It's the opposite of default methods:
 
-- **default**: other people implement it, and you can still evolve it.
-- **sealed**: you control every implementation.
+- **default**: Others can implement it, and you can still add methods without breaking them.
+- **sealed**: You control every implementation, since only the types listed in `permits` can implement it.
 
 ### When You Need permits
 

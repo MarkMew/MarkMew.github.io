@@ -10,7 +10,9 @@ lang: zh-TW
 date: 2026-11-24
 ---
 
-從 Java 8 開始，interface 不再只能宣告 abstract 方法與常數，陸續加入了 default、static、private 方法；之後又有 record、sealed interface 與模式比對，改變了 interface 的使用方式。
+Java 的 interface 的方法都是 public 而且都可以被繼承和實作嗎？
+
+這個答案既對也錯，要看你使用的 Java 版本決定。Java 8 以前，interface 的方法都隱含為 `public abstract`，而且一定要由實作類別實作，所以說它們都是 public 是對的。之後的版本逐步改變了這個情況：Java 8 起可以有 `default` 與 `static` 方法，它們必須是 public，實作類別可以選擇覆寫；Java 9 才允許 `private` 方法，用來讓 default 方法共用內部邏輯，而不必公開輔助方法；Java 17 起的 `sealed interface` 則用 `permits` 限制，只有指定的類別或子介面能實作它。
 
 本文依版本整理這些變化，說明每個功能要解決的問題，並附上範例。
 
@@ -158,7 +160,7 @@ class C implements A, B {
 }
 ```
 
-另外，interface 也可以用 `extends` 繼承一個或多個 interface，例如 `interface C extends A, B {}`。
+另外，interface 也可以用 `extends` 繼承一個或多個 interface，例如 `interface D extends A, B {}`。
 
 ## Java 16：record
 
@@ -196,7 +198,7 @@ record 適合用在 DTO、方法回傳多個值、Map 的 key、設定值等情�
 
 ## Java 17：sealed interface 與 Java 21 模式比對
 
-sealed interface 限制哪些類別能實作它，搭配 Java 21 的 `switch` 模式比對，編譯器就能檢查是否處理了所有情況。
+sealed interface 限制哪些類別或子介面能實作或繼承它，搭配 Java 21 的 `switch` 模式比對，編譯器就能檢查是否處理了所有情況。
 
 它和 default 方法的方向正好相反：
 
